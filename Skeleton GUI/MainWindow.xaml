@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <TabControl HorizontalAlignment="Left" Height="409" Margin="10,0,0,0" VerticalAlignment="Top" Width="772">
+        <TabControl HorizontalAlignment="Left" Height="409" Margin="-2,-2,-2,0" VerticalAlignment="Top" Width="772">
             <TabItem Header="Things">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
@@ -19,7 +19,7 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Services">
-                <Grid Background="#FFE5E5E5">
+                <Grid Background="#FFE5E5E5" Margin="-2,-2,-2,0">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
                         <ColumnDefinition Width="40*"/>
@@ -37,6 +37,15 @@
                 </Grid>
             </TabItem>
             <TabItem Header="Apps" Margin="-2,-2,-2,0">
+                <Grid Background="#FFE5E5E5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="47*"/>
+                        <ColumnDefinition Width="40*"/>
+                        <ColumnDefinition Width="679*"/>
+                    </Grid.ColumnDefinitions>
+                </Grid>
+            </TabItem>
+            <TabItem Header="Recipes" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
