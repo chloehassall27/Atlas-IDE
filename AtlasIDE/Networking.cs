@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Numerics;
@@ -11,6 +12,7 @@ namespace AtlasIDE
     public class Networking
     {
         private static UdpClient udpClient;
+        private static List<Thing> Things { get; } = new List<Thing>();
         public static void Start()
         {
             udpClient = new UdpClient(1235);
@@ -29,27 +31,69 @@ namespace AtlasIDE
 
                 var Message = Encoding.Default.GetString(data);
 
-                var result = JsonConvert.DeserializeObject<Tweet>(Message);
-                switch (result.TweetType) {
+                var tweet = JsonConvert.DeserializeObject<Tweet>(Message);
+                switch (tweet.TweetType) {
                     case "Identity_Thing":
-                        result = JsonConvert.DeserializeObject<IdentityThingTweet>(Message);
+                        var thingTweet = JsonConvert.DeserializeObject<IdentityThingTweet>(Message);
+                        if (Things.Find(x => x.ID == tweet.ThingID) == null) {
+                            Console.WriteLine("New thing found!");
+                            Things.Add(new Thing(thingTweet));
+                        }
                         break;
                     case "Identity_Language":
-                        result = JsonConvert.DeserializeObject<IdentityLanguageTweet>(Message);
+                        var langTweet = JsonConvert.DeserializeObject<IdentityLanguageTweet>(Message);
+                        var thing = Things.Find(x => x.ID == langTweet.ThingID);
+                        if (thing != null)
+                            thing.AddNetworkInfo(langTweet);
                         break;
                     case "Identity_Entity":
-                        result = JsonConvert.DeserializeObject<IdentityEntityTweet>(Message);
+                        var entityTweet = JsonConvert.DeserializeObject<IdentityEntityTweet>(Message);
+                        thing = Things.Find(x => x.ID == entityTweet.ThingID);
+                        if (thing == null) break;
+
+                        // Seach for entities and add if it doesn't exist
+                        if (thing.Entities.Find(x => x.ID == entityTweet.ID) == null)
+                        {
+                            Console.WriteLine("New entity found!");
+                            thing.Entities.Add(new Entity(entityTweet));
+                        }
                         break;
                     case "Service":
-                        result = JsonConvert.DeserializeObject<ServiceTweet>(Message);
+                        var serviceTweet = JsonConvert.DeserializeObject<ServiceTweet>(Message);
+                        thing = Things.Find(x => x.ID == serviceTweet.ThingID);
+                        if (thing == null) break;
+
+                        var entity = thing.Entities.Find(x => x.ID == serviceTweet.EntityID);
+                        if (entity == null) break;
+
+                        // Seach for services and add if it doesn't exist
+                        if (entity.Services.Find(x => x.Name == serviceTweet.Name) == null)
+                        {
+                            Console.WriteLine("New service found!");
+                            entity.Services.Add(new Service(serviceTweet));
+                        }
                         break;
+
+                    case "Relationship":
+                        var relationshipTweet = JsonConvert.DeserializeObject<RelationshipTweet>(Message);
+                        thing = Things.Find(x => x.ID == relationshipTweet.ThingID);
+                        if (thing == null) break;
+
+                        // Seach for relationships and add if it doesn't exist
+                        if (thing.Relationships.Find(x => x.Name == relationshipTweet.Name) == null)
+                        {
+                            Console.WriteLine("New relationship found!");
+                            thing.Relationships.Add(new Relationship(relationshipTweet));
+                        }
+                        break;
+
+                    // What about unbounded services?
 
                     default:
                         break;
                 }
-
-                Console.WriteLine(Message);
             }
         }
+
     }
 }

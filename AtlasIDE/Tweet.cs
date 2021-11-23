@@ -84,4 +84,24 @@ namespace AtlasIDE
         public string Keywords { get; set; }
     }
 
+
+    public class RelationshipTweet : Tweet
+    {
+        [JsonProperty(PropertyName = "Name")]
+        public string Name { get; set; }
+        [JsonProperty(PropertyName = "Owner")]
+        public string Owner { get; set; }
+        [JsonProperty(PropertyName = "Category")]
+        public string Category { get; set; }
+        [JsonProperty(PropertyName = "Type")]
+        public string Type { get; set; }
+        [JsonProperty(PropertyName = "Description")]
+        public string Description { get; set; }
+        [JsonProperty(PropertyName = "FS name")]
+        public string FSname { get; set; }
+        [JsonProperty(PropertyName = "SS name")]
+        public string SSname { get; set; }
+    }
+
+
 }
