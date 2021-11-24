@@ -9,7 +9,7 @@ namespace AtlasIDE
     class Thing
     {
         public List<Entity> Entities { get; } = new List<Entity>();
-        public List<Relationship> Relationships { get; } = new List<Relationship>();
+        public List<Relationship> Relationships { get; } = new List<Relationship>(); // Technically, relationships are supposed to belong to entities
 
         public string ID { get; set; }
         public string SpaceID { get; set; }
