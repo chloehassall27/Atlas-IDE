@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 
 namespace AtlasIDE
 {
@@ -10,7 +11,17 @@ namespace AtlasIDE
         public MainWindow()
         {
             InitializeComponent();
+            Networking.Window = this;
             Networking.Start();
+        }
+
+        public void UpdateThings()
+        {
+            thingList.ItemsSource = Networking.Things;
+        }
+        public void UpdateServices()
+        {
+            serviceList.ItemsSource = Networking.Services;
         }
     }
 }
