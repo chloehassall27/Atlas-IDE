@@ -15,7 +15,9 @@ namespace AtlasIDE
         public string Category { get; set; }
         public string Type { get; set; }
         public string Description { get; set; }
+        // First Service Name
         public string FSname { get; set; }
+        // Second Service Name
         public string SSname { get; set; }
 
         public Relationship(RelationshipTweet tweet)
