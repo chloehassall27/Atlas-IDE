@@ -1,4 +1,10 @@
-﻿using System.Windows;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Input;
 
 namespace AtlasIDE
 {
@@ -7,28 +13,18 @@ namespace AtlasIDE
     /// </summary>
     public partial class MainWindow : Window
     {
-<<<<<<< Updated upstream
-        
-        Relationship rel;
-        bool initRel = false;
-        System.Windows.Controls.ListBox dragSource = null; 
-=======
         public ICollectionView view;
         Relationship rel;
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
->>>>>>> Stashed changes
+
+
         public MainWindow()
         {
             InitializeComponent();
+            Networking.Window = this;
             Networking.Start();
-<<<<<<< Updated upstream
-=======
             
-            ShowRelEdit(false);
-            // Remove when done
-
->>>>>>> Stashed changes
             RelationshipTweet tweet = new RelationshipTweet();
             rel = new Relationship(tweet);
             rel.Name = "Test Relationship";
@@ -41,21 +37,13 @@ namespace AtlasIDE
             rel.ThingID = "6969";
             rel.Type = "Software";
 
-<<<<<<< Updated upstream
             lbDrop.AllowDrop = true;
 
             lbRelationship.Items.Add(rel.Name);
             ShowRelEdit(false);
         }
 
-=======
-            lbRelationship.Items.Add(rel.Name);
 
-
-        }
-
-        // Justin Relationship Code
->>>>>>> Stashed changes
         private void btRelEdit_Click(object sender, RoutedEventArgs e)
         {
             ShowRelEdit(true);
@@ -68,11 +56,8 @@ namespace AtlasIDE
 
             if (show) // Show Relationship edit form
             {
-<<<<<<< Updated upstream
                 if(lbRelationship.SelectedItem == null)
-=======
-                if (lbRelationship.SelectedItem == null)
->>>>>>> Stashed changes
+
                 {
                     MessageBox.Show("Error you must select a relationship to edit!");
                     return;
@@ -124,8 +109,6 @@ namespace AtlasIDE
                 }
 
             }
-
-<<<<<<< Updated upstream
         }
 
         private void btRelSave_Click(object sender, RoutedEventArgs e)
@@ -137,72 +120,6 @@ namespace AtlasIDE
 
 
         private void DragOver_Recipe(object sender, DragEventArgs e)
-=======
-        }
-
-        private void btRelSave_Click(object sender, RoutedEventArgs e)
-        {
-            ShowRelEdit(false);
-            MessageBox.Show("Relationship saved!");
-        }
-
-        // Source for drag and drop between listboxes -> https://www.c-sharpcorner.com/uploadfile/dpatra/drag-and-drop-item-in-listbox-in-wpf/
-        private void lbRelationship_PreMouseLeftButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            System.Windows.Controls.ListBox parent = (System.Windows.Controls.ListBox)sender;
-            dragSource = parent;
-            object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
-
-            if (data != null)
-            {
-                DragDrop.DoDragDrop(parent, data, DragDropEffects.Move);
-            }
-
-        }
-        private static object GetDataFromListBox(System.Windows.Controls.ListBox source, Point point)
-        {
-            UIElement element = source.InputHitTest(point) as UIElement;
-            if (element != null)
-            {
-                object data = DependencyProperty.UnsetValue;
-                while (data == DependencyProperty.UnsetValue)
-                {
-                    data = source.ItemContainerGenerator.ItemFromContainer(element);
-
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        element = System.Windows.Media.VisualTreeHelper.GetParent(element) as UIElement;
-                    }
-
-                    if (element == source)
-                    {
-                        return null;
-                    }
-                }
-
-                if (data != DependencyProperty.UnsetValue)
-                {
-                    return data;
-                }
-            }
-
-            return null;
-        }
-
-        private void lbDrop_Drop(object sender, DragEventArgs e)
-        {
-            System.Windows.Controls.ListBox parent = (System.Windows.Controls.ListBox)sender;
-            object data = e.Data.GetData(typeof(string));
-            //dragSource.Items.Remove(data);
-
-            parent.Items.Add(data);
-
-        }
-
-        // Kyle Thing/Service Code
-
-        public void UpdateThings()
->>>>>>> Stashed changes
         {
 
            // TBD
@@ -224,17 +141,8 @@ namespace AtlasIDE
 
         }
 
-<<<<<<< Updated upstream
-        private static object GetDataFromListBox(System.Windows.Controls.ListBox source, Point point)
-=======
-        public void UpdateRelationships()
-        {
-            lbRelationship.ItemsSource = null;
-            lbRelationship.ItemsSource = view;
-        }
 
-        public void Filter()
->>>>>>> Stashed changes
+        private static object GetDataFromListBox(System.Windows.Controls.ListBox source, Point point)
         {
             UIElement element = source.InputHitTest(point) as UIElement;
             if (element != null)
@@ -284,6 +192,42 @@ namespace AtlasIDE
         private void Relationships_DragOver(object sender, DragEventArgs e)
         {
             Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 2));
+        }
+
+        public void UpdateThings()
+        {
+            thingList.ItemsSource = null;
+            thingList.ItemsSource = Networking.Things;
+            //thingList.UpdateLayout();
+        }
+        public void UpdateServices()
+        {
+            List<string> services = new List<string>();
+            foreach (Service service in Networking.Services)
+                if (!services.Contains(service.ThingID))
+                    services.Add(service.ThingID);
+            thingFilterList.ItemsSource = services;
+
+            view = CollectionViewSource.GetDefaultView(Networking.Services);
+            serviceList.ItemsSource = null;
+            serviceList.ItemsSource = view;
+            //serviceList.UpdateLayout();
+        }
+
+        public void Filter()
+        {
+            if (thingFilterList.SelectedItems.Count > 0)
+                view.Filter = (o) =>
+                {
+                    return thingFilterList.SelectedItems.Contains(((Service)o).ThingID);
+                };
+            else
+                view.Filter = null;
+        }
+
+        private void FilterChangeSelection(object sender, SelectionChangedEventArgs e)
+        {
+            Filter();
         }
     }
 }
