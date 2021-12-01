@@ -15,7 +15,7 @@ namespace AtlasIDE
     {
         private static UdpClient udpClient;
         public static List<Thing> Things { get; } = new List<Thing>();
-        public static List<Service> Services = new List<Service>();
+        public static List<Service> Services { get; } = new List<Service>();
         public static MainWindow Window;
         public static void Start()
         {
@@ -48,8 +48,10 @@ namespace AtlasIDE
                     case "Identity_Language":
                         var langTweet = JsonConvert.DeserializeObject<IdentityLanguageTweet>(Message);
                         var thing = Things.Find(x => x.ID == langTweet.ThingID);
-                        if (thing != null)
+                        if (thing != null) { 
                             thing.AddNetworkInfo(langTweet);
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle); 
+                        }
                         break;
                     case "Identity_Entity":
                         var entityTweet = JsonConvert.DeserializeObject<IdentityEntityTweet>(Message);
@@ -61,6 +63,7 @@ namespace AtlasIDE
                         {
                             Console.WriteLine("New entity found!");
                             thing.Entities.Add(new Entity(entityTweet));
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
                         }
                         break;
                     case "Service":
@@ -80,6 +83,7 @@ namespace AtlasIDE
                             Services.Add(service);
                             Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         }
+                        //Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         break;
 
                     case "Relationship":
