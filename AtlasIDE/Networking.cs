@@ -96,6 +96,7 @@ namespace AtlasIDE
                         {
                             Console.WriteLine("New relationship found!");
                             thing.Relationships.Add(new Relationship(relationshipTweet));
+                            Application.Current.Dispatcher.Invoke(Window.UpdateRelationships, DispatcherPriority.ContextIdle);
                         }
                         break;
 

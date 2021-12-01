@@ -6,17 +6,8 @@
         xmlns:local="clr-namespace:Skeleton_GUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Window.Resources>
-        <ControlTemplate x:Key="FieldTemplate" TargetType="ContentControl">
-            <Border Background="LightGray" >
-                <DockPanel >
-                    <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding Content}" />
-                </DockPanel>
-            </Border>
-        </ControlTemplate>
-    </Window.Resources>
-    <StackPanel>
-        <TabControl HorizontalAlignment="Left" Height="420" Margin="-2,-2,0,0" VerticalAlignment="Top" Width="794">
+    <Grid>
+        <TabControl HorizontalAlignment="Left" Height="409" Margin="-2,-2,-2,0" VerticalAlignment="Top" Width="772">
             <TabItem Header="Things">
                 <ListBox Name="thingList" HorizontalAlignment="Left" VerticalAlignment="Top" Height="393" Width="788" >
                     <ListBox.ItemsPanel>
@@ -134,18 +125,39 @@
                         <ColumnDefinition Width="40*"/>
                         <ColumnDefinition Width="679*"/>
                     </Grid.ColumnDefinitions>
+                    <Label Content="Relationships" HorizontalAlignment="Left" Margin="39,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="82"/>
+                    <ListBox x:Name="lbRelationship" HorizontalAlignment="Left" Height="160" Margin="19,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton"/>
+                    <Button x:Name="btRelEdit" Content="Edit" Grid.Column="2" HorizontalAlignment="Left" Margin="67,72,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.467,-0.25" Click="btRelEdit_Click"/>
+                    <TextBox x:Name="tbRelName" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="192,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lbRelName" Content="Relationship Name" Grid.Column="2" HorizontalAlignment="Left" Margin="192,31,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lbRelOwn" Content="Owner" Grid.Column="2" Margin="387,31,232,0" VerticalAlignment="Top" Width="60" HorizontalAlignment="Center"/>
+                    <TextBox x:Name="tbRelCat" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="512,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="tbRelOwn" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="357,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lbRelCat" Content="Category" Grid.Column="2" Margin="542,31,77,0" VerticalAlignment="Top" Width="60" HorizontalAlignment="Center"/>
+                    <TextBox x:Name="tbRelDescription" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="192,117,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="440"/>
+                    <Label x:Name="lbRelDes" Content="Description" Grid.Column="2" HorizontalAlignment="Left" Margin="192,91,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lbRelThing" Content="Thing ID" Grid.Column="2" HorizontalAlignment="Left" Margin="222,151,0,0" VerticalAlignment="Top" Width="55"/>
+                    <Label x:Name="lbRelSpace" Content="Space ID" Grid.Column="2" HorizontalAlignment="Left" Margin="387,151,0,0" VerticalAlignment="Top" Width="120"/>
+                    <Label x:Name="lbRelType" Content="Type" Grid.Column="2" HorizontalAlignment="Left" Margin="552,151,0,0" VerticalAlignment="Top" Width="45"/>
+                    <TextBox x:Name="tbRelThing" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="192,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="tbRelSpace" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="357,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <TextBox x:Name="tbRelType" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="512,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                    <Button x:Name="btRelSave" Content="Save" Grid.Column="2" HorizontalAlignment="Left" Margin="67,177,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.467,-0.25" Click="btRelSave_Click"/>
+                    <ListBox x:Name="lbDrop" HorizontalAlignment="Left" Height="115" Margin="19,237,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" Drop="lbDrop_Drop"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Apps">
+            <TabItem x:Name="tabControl" Header="Recipes" Margin="-2,-2,-2,0" DragOver="DragOver_Recipe">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
                         <ColumnDefinition Width="40*"/>
                         <ColumnDefinition Width="679*"/>
                     </Grid.ColumnDefinitions>
+                    <Label Content="APP" HorizontalAlignment="Left" Margin="13,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="38" Grid.Column="1"/>
+                    <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="160" Margin="19,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3"/>
                 </Grid>
             </TabItem>
-            <TabItem Header="Recipes">
+            <TabItem Header="Apps" Margin="-2,-2,-2,0">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
@@ -155,5 +167,6 @@
                 </Grid>
             </TabItem>
         </TabControl>
-    </StackPanel>
+
+    </Grid>
 </Window>
