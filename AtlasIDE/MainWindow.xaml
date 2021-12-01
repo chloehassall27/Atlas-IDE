@@ -6,6 +6,7 @@
         xmlns:local="clr-namespace:Skeleton_GUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+<<<<<<< Updated upstream
     <Grid>
         <TabControl HorizontalAlignment="Left" Height="409" Margin="-2,-2,-2,0" VerticalAlignment="Top" Width="772">
             <TabItem Header="Things">
@@ -77,4 +78,189 @@
             </TabItem>
         </TabControl>
     </Grid>
+=======
+    <Window.Resources>
+        <ControlTemplate x:Key="FieldTemplate" TargetType="ContentControl">
+            <Border Background="LightGray" >
+                <DockPanel >
+                    <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding Content}" />
+                </DockPanel>
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
+    <StackPanel>
+        <Viewbox>
+            <TabControl x:Name="tabControl" HorizontalAlignment="Left" Height="420" Margin="-2,-2,0,0" VerticalAlignment="Top" Width="794">
+                <TabItem Header="Things">
+                    <ListBox Name="thingList" HorizontalAlignment="Left" VerticalAlignment="Top" Height="393" Width="788" >
+                        <ListBox.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <UniformGrid Columns="3" />
+                            </ItemsPanelTemplate>
+                        </ListBox.ItemsPanel>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical"  
+                                    VerticalAlignment="Center">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Name: " 
+                                                FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding Name}" 
+                                            FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Space: " 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding SpaceID}" 
+                                            FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Description: " 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding Description}" 
+                                            FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="Model: " 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding Model}" 
+                                            FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="OS: " 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding OS}" 
+                                            FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="IP: " 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding IP}" 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text=":" 
+                                            FontSize="16"></TextBlock>
+                                        <TextBlock Text="{Binding Port}" 
+                                            FontSize="16"></TextBlock>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </TabItem>
+                <TabItem Header="Services">
+                    <StackPanel VerticalAlignment="Stretch" >
+                        <ListView Name="thingFilterList" SelectionChanged="FilterChangeSelection" SelectionMode="Multiple">
+                            <ListView.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"></StackPanel>
+                                </ItemsPanelTemplate>
+                            </ListView.ItemsPanel>
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding}" 
+                                    FontSize="16" TextAlignment="Center" VerticalAlignment="Top" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <ListBox x:Name="serviceList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="366" >
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Vertical"  
+                                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="{Binding Name}" 
+                                                        FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                                        <TextBlock Text="================" 
+                                                        FontSize="16" TextAlignment="Center"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="Thing: " 
+                                                        FontSize="16"/>
+                                            <TextBlock Text="{Binding ThingID}" 
+                                                        FontSize="16" HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="Entity: " 
+                                                        FontSize="16"/>
+                                            <TextBlock Text="{Binding EntityID}" 
+                                                        FontSize="16" HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="Type: " 
+                                                        FontSize="16"/>
+                                            <TextBlock Text="{Binding Type}" 
+                                                        FontSize="16" HorizontalAlignment="Right"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                            <TextBlock Text="Description: " 
+                                                        FontSize="16"/>
+                                            <TextBlock Text="{Binding Description}" 
+                                                        FontSize="16" HorizontalAlignment="Right" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </StackPanel>
+                </TabItem>
+                <TabItem x:Name="tiRelationships" Header="Relationships" DragOver="Relationships_DragOver" AllowDrop="True">
+                    <Grid Background="#FFE5E5E5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="47*"/>
+                            <ColumnDefinition Width="40*"/>
+                            <ColumnDefinition Width="679*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid Background="#FFE5E5E5" Grid.ColumnSpan="3" Margin="0,0,22,11">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="47*"/>
+                                <ColumnDefinition Width="40*"/>
+                                <ColumnDefinition Width="237*"/>
+                                <ColumnDefinition Width="442*"/>
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Relationships" HorizontalAlignment="Left" Margin="39,171,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="82"/>
+                            <ListBox x:Name="lbRelationship" HorizontalAlignment="Left" Height="160" Margin="19,197,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" />
+                            <Button x:Name="btRelEdit" Content="Edit" Grid.Column="2" HorizontalAlignment="Left" Margin="67,72,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.467,-0.25" Click="btRelEdit_Click"/>
+                            <TextBox x:Name="tbRelName" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="192,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                            <Label x:Name="lbRelName" Content="Relationship Name" Grid.Column="2" HorizontalAlignment="Left" Margin="192,31,0,0" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                            <Label x:Name="lbRelOwn" Content="Owner" Grid.Column="3" Margin="150,31,232,0" VerticalAlignment="Top" Width="60" HorizontalAlignment="Center"/>
+                            <TextBox x:Name="tbRelCat" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="275,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <TextBox x:Name="tbRelOwn" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="120,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <Label x:Name="lbRelCat" Content="Category" Grid.Column="3" Margin="305,31,77,0" VerticalAlignment="Top" Width="60" HorizontalAlignment="Center"/>
+                            <TextBox x:Name="tbRelDescription" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="192,117,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="440" Grid.ColumnSpan="2"/>
+                            <Label x:Name="lbRelDes" Content="Description" Grid.Column="2" HorizontalAlignment="Left" Margin="192,91,0,0" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                            <Label x:Name="lbRelThing" Content="Thing ID" Grid.Column="2" HorizontalAlignment="Left" Margin="222,151,0,0" VerticalAlignment="Top" Width="55" Grid.ColumnSpan="2"/>
+                            <Label x:Name="lbRelSpace" Content="Space ID" Grid.Column="3" HorizontalAlignment="Left" Margin="150,151,0,0" VerticalAlignment="Top" Width="120"/>
+                            <Label x:Name="lbRelType" Content="Type" Grid.Column="3" HorizontalAlignment="Left" Margin="315,151,0,0" VerticalAlignment="Top" Width="45"/>
+                            <TextBox x:Name="tbRelThing" Grid.Column="2" HorizontalAlignment="Left" Height="23" Margin="192,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120" Grid.ColumnSpan="2"/>
+                            <TextBox x:Name="tbRelSpace" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="120,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <TextBox x:Name="tbRelType" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="275,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                            <Button x:Name="btRelSave" Content="Save" Grid.Column="2" HorizontalAlignment="Left" Margin="67,177,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.467,-0.25" Click="btRelSave_Click"/>
+                            <ListBox x:Name="lbDrop" HorizontalAlignment="Left" Height="135" Margin="19,31,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Drop="lbDrop_Drop" Grid.ColumnSpan="3" AllowDrop="True"/>
+                            <Label Content="Things" HorizontalAlignment="Left" Margin="9,5,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="48" Grid.Column="1"/>
+                        </Grid>
+                    </Grid>
+                </TabItem>
+                <TabItem x:Name="tiRecipe" Header="Recipes" DragOver="recipe_DragOver" AllowDrop="True">
+                    <Grid Background="#FFE5E5E5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="48*"/>
+                            <ColumnDefinition Width="41*"/>
+                            <ColumnDefinition Width="120*"/>
+                            <ColumnDefinition Width="579*"/>
+                        </Grid.ColumnDefinitions>
+                        <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="135" Margin="19,31,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" AllowDrop="True" Drop="lbDrop_Drop"/>
+                        <Label Content="App" HorizontalAlignment="Left" Margin="8,5,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="48" Grid.Column="1"/>
+                    </Grid>
+                </TabItem>
+                <TabItem Header="Apps">
+                    <Grid Background="#FFE5E5E5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="47*"/>
+                            <ColumnDefinition Width="40*"/>
+                            <ColumnDefinition Width="679*"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </TabItem>
+            </TabControl>
+        </Viewbox>
+    </StackPanel>
+>>>>>>> Stashed changes
 </Window>
