@@ -5,14 +5,18 @@ using System.Net.Sockets;
 using System.Numerics;
 using System.Text;
 using System.Threading;
+using System.Windows;
+using System.Windows.Threading;
 using Newtonsoft.Json;
 
 namespace AtlasIDE
 {
-    public class Networking
+    class Networking
     {
         private static UdpClient udpClient;
-        private static List<Thing> Things { get; } = new List<Thing>();
+        public static List<Thing> Things { get; } = new List<Thing>();
+        public static List<Service> Services { get; } = new List<Service>();
+        public static MainWindow Window;
         public static void Start()
         {
             udpClient = new UdpClient(1235);
@@ -38,13 +42,16 @@ namespace AtlasIDE
                         if (Things.Find(x => x.ID == tweet.ThingID) == null) {
                             Console.WriteLine("New thing found!");
                             Things.Add(new Thing(thingTweet));
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
                         }
                         break;
                     case "Identity_Language":
                         var langTweet = JsonConvert.DeserializeObject<IdentityLanguageTweet>(Message);
                         var thing = Things.Find(x => x.ID == langTweet.ThingID);
-                        if (thing != null)
+                        if (thing != null) { 
                             thing.AddNetworkInfo(langTweet);
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle); 
+                        }
                         break;
                     case "Identity_Entity":
                         var entityTweet = JsonConvert.DeserializeObject<IdentityEntityTweet>(Message);
@@ -56,6 +63,7 @@ namespace AtlasIDE
                         {
                             Console.WriteLine("New entity found!");
                             thing.Entities.Add(new Entity(entityTweet));
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
                         }
                         break;
                     case "Service":
@@ -70,8 +78,12 @@ namespace AtlasIDE
                         if (entity.Services.Find(x => x.Name == serviceTweet.Name) == null)
                         {
                             Console.WriteLine("New service found!");
-                            entity.Services.Add(new Service(serviceTweet));
+                            var service = new Service(serviceTweet);
+                            entity.Services.Add(service);
+                            Services.Add(service);
+                            Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         }
+                        //Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         break;
 
                     case "Relationship":

@@ -6,28 +6,128 @@
         xmlns:local="clr-namespace:Skeleton_GUI"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <TabControl HorizontalAlignment="Left" Height="409" Margin="-2,-2,-2,0" VerticalAlignment="Top" Width="772">
+    <Window.Resources>
+        <ControlTemplate x:Key="FieldTemplate" TargetType="ContentControl">
+            <Border Background="LightGray" >
+                <DockPanel >
+                    <TextBlock DockPanel.Dock="Left" Text="{TemplateBinding Content}" />
+                </DockPanel>
+            </Border>
+        </ControlTemplate>
+    </Window.Resources>
+    <StackPanel>
+        <TabControl HorizontalAlignment="Left" Height="420" Margin="-2,-2,0,0" VerticalAlignment="Top" Width="794">
             <TabItem Header="Things">
-                <Grid Background="#FFE5E5E5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="0*"/>
-                        <ColumnDefinition Width="0*"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-                    <Label Content="I am on tab 1!" HorizontalAlignment="Left" Margin="343,164,0,0" VerticalAlignment="Top" Grid.Column="2" Height="26" Width="84"/>
-                </Grid>
+                <ListBox Name="thingList" HorizontalAlignment="Left" VerticalAlignment="Top" Height="393" Width="788" >
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <UniformGrid Columns="3" />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Vertical"  
+                                    VerticalAlignment="Center">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Name: " 
+                                                FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding Name}" 
+                                            FontSize="16"></TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Space: " 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding SpaceID}" 
+                                            FontSize="16"></TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Description: " 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding Description}" 
+                                            FontSize="16"></TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Model: " 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding Model}" 
+                                            FontSize="16"></TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="OS: " 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding OS}" 
+                                            FontSize="16"></TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="IP: " 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding IP}" 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text=":" 
+                                            FontSize="16"></TextBlock>
+                                    <TextBlock Text="{Binding Port}" 
+                                            FontSize="16"></TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
             </TabItem>
             <TabItem Header="Services">
-                <Grid Background="#FFE5E5E5" Margin="-2,-2,-2,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="47*"/>
-                        <ColumnDefinition Width="40*"/>
-                        <ColumnDefinition Width="679*"/>
-                    </Grid.ColumnDefinitions>
-                </Grid>
+                <StackPanel VerticalAlignment="Stretch" >
+                    <ListView Name="thingFilterList" SelectionChanged="FilterChangeSelection" SelectionMode="Multiple">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal"></StackPanel>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding}" 
+                                    FontSize="16" TextAlignment="Center" VerticalAlignment="Top" />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                    <ListBox x:Name="serviceList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="366" >
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Vertical"  
+                                                VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                                    <TextBlock Text="{Binding Name}" 
+                                                        FontSize="16" TextAlignment="Center" VerticalAlignment="Top"/>
+                                    <TextBlock Text="================" 
+                                                        FontSize="16" TextAlignment="Center"/>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Thing: " 
+                                                        FontSize="16"/>
+                                        <TextBlock Text="{Binding ThingID}" 
+                                                        FontSize="16" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Entity: " 
+                                                        FontSize="16"/>
+                                        <TextBlock Text="{Binding EntityID}" 
+                                                        FontSize="16" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Type: " 
+                                                        FontSize="16"/>
+                                        <TextBlock Text="{Binding Type}" 
+                                                        FontSize="16" HorizontalAlignment="Right"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch">
+                                        <TextBlock Text="Description: " 
+                                                        FontSize="16"/>
+                                        <TextBlock Text="{Binding Description}" 
+                                                        FontSize="16" HorizontalAlignment="Right" TextWrapping="Wrap"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </StackPanel>
             </TabItem>
-            <TabItem Header="Relationships" Margin="-2,-2,-2,0">
+            <TabItem Header="Relationships">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
@@ -36,7 +136,7 @@
                     </Grid.ColumnDefinitions>
                 </Grid>
             </TabItem>
-            <TabItem Header="Apps" Margin="-2,-2,-2,0">
+            <TabItem Header="Apps">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
@@ -45,7 +145,7 @@
                     </Grid.ColumnDefinitions>
                 </Grid>
             </TabItem>
-            <TabItem Header="Recipes" Margin="-2,-2,-2,0">
+            <TabItem Header="Recipes">
                 <Grid Background="#FFE5E5E5">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="47*"/>
@@ -55,5 +155,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-    </Grid>
+    </StackPanel>
 </Window>
