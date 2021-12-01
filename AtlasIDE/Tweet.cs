@@ -103,5 +103,26 @@ namespace AtlasIDE
         public string SSname { get; set; }
     }
 
+    public class ServiceCallTweet : Tweet
+    {
+        [JsonProperty(PropertyName = "Service Name")]
+        public string Name { get; set; }
+        [JsonProperty(PropertyName = "Service Inputs")]
+        public string Inputs { get; set; }
+
+    }
+
+
+    public class ServiceResponseTweet : Tweet
+    {
+        [JsonProperty(PropertyName = "Service Name")]
+        public string ServiceName { get; set; }
+        [JsonProperty(PropertyName = "Status")]
+        public string Status { get; set; }
+        [JsonProperty(PropertyName = "Status Description")]
+        public string StatusDescription { get; set; }
+        [JsonProperty(PropertyName = "Service Result")]
+        public string ServiceResult { get; set; }
+    }
 
 }

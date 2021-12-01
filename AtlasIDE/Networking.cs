@@ -83,7 +83,6 @@ namespace AtlasIDE
                             Services.Add(service);
                             Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         }
-                        //Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         break;
 
                     case "Relationship":
@@ -107,5 +106,35 @@ namespace AtlasIDE
             }
         }
 
+
+        private static readonly string HOST = "192.168.0.199";
+        private static readonly int PORT = 6668;
+        public static ServiceResponseTweet Call(Service service, int? input = null)
+        {
+            ServiceCallTweet call = new ServiceCallTweet();
+            call.TweetType = "Service call";
+            call.ThingID = service.ThingID;
+            call.SpaceID = service.SpaceID;
+            call.Name = service.Name;
+            call.Inputs = '(' + input.ToString() + ')';
+            Console.WriteLine(JsonConvert.SerializeObject(call, Formatting.Indented));
+
+            Thing thing = Things.Find(x => x.ID == service.ThingID);
+
+            TcpClient client = new TcpClient(HOST, PORT);
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(call, Formatting.Indented));
+            NetworkStream stream = client.GetStream();
+            stream.Write(data, 0, data.Length);
+
+            data = new Byte[256];
+            String responseData = String.Empty;
+            Int32 bytes = stream.Read(data, 0, data.Length);
+            responseData = Encoding.ASCII.GetString(data, 0, bytes);
+            ServiceResponseTweet response = JsonConvert.DeserializeObject<ServiceResponseTweet>(responseData);
+            Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
+            stream.Close();
+            client.Close();
+            return response;
+        }
     }
 }
