@@ -73,6 +73,9 @@ namespace AtlasIDE
 
 
             lbDrop.AllowDrop = true;
+            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
+            serviceList.ItemsSource = view;
+            lbService.ItemsSource = view;
 
             /*
             lbRelationship.Items.Add(rel.Name);
@@ -163,6 +166,8 @@ namespace AtlasIDE
                     rel.SSname = tbRelSec.Text;
 
                 }
+
+                UpdateRelationship();
              
                 initRel = true;
 
@@ -451,7 +456,7 @@ namespace AtlasIDE
         }
         
 
-        // Kyle Service/Thing Code
+        // Hassall Service/Thing Code
 
         public void UpdateThings()
         {
@@ -462,16 +467,14 @@ namespace AtlasIDE
         public void UpdateServices()
         {
             List<string> thingIDs = new List<string>();
-            foreach (Service service in Networking.Services)
+            foreach (Service service in Networking.ServicesCollection)
                 if (!thingIDs.Contains(service.ThingID))
                     thingIDs.Add(service.ThingID);
             thingFilterList.ItemsSource = thingIDs;
 
-            view = CollectionViewSource.GetDefaultView(Networking.Services);
-            serviceList.ItemsSource = null;
-            lbService.ItemsSource = null;
-            serviceList.ItemsSource = view;
-            lbService.ItemsSource = view;
+            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
+            serviceList.Items.Refresh();
+            lbService.Items.Refresh();
             //serviceList.UpdateLayout();
         }
 
