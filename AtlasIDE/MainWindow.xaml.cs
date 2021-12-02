@@ -67,6 +67,7 @@ namespace AtlasIDE
             App testApp = new App();
             testApp.Name = "Test App";
             lbApp.Items.Add(testApp.Name);
+            lbAppMan.Items.Add(testApp.Name);
 
 
             lbDrop.AllowDrop = true;
@@ -295,6 +296,10 @@ namespace AtlasIDE
             appList.Add(app);
             lbAppMan.Items.Add(appName);
             if (app.Commands.Count > 0) { app.Commands.Clear(); }
+            lbRecipe.Items.Clear();
+            lbIF.Items.Clear();
+            lbTHEN.Items.Clear();
+            tbAppName.Clear();
             app.Name = null;
             MessageBox.Show("App Published!");
             appShow(false);
@@ -421,6 +426,19 @@ namespace AtlasIDE
             if (lbTHEN.Items.Count > 1) { lbTHEN.Items.Clear(); }
             lbTHEN.Items.Add(data);
             cond.THEN = data;
+        }
+
+        public void btActivate(object sender, RoutedEventArgs e)
+        {
+            if (lbAppMan.SelectedItem == null)
+            {
+                MessageBox.Show("Error: No App Selected!");
+                return;
+            }
+
+            DateTime now = DateTime.Now;
+            string select_rel = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
+            lbStatus.Items.Add(select_rel);
         }
         
 
