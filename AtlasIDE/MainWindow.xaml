@@ -193,6 +193,7 @@
                         <Button x:Name="bt_AddCond" Content="Add" Click ="btAddCond" Margin="422.4,289,227,77" Grid.Column="2"/>
                     </Grid>
                 </TabItem>
+                <TabItem x:Name="tiApps" Header="Apps" Margin="-2,-2,-2,0">
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="0*"/>
