@@ -121,14 +121,6 @@ namespace AtlasIDE
             }
         }
 
-
-        private void DragOver_Recipe(object sender, DragEventArgs e)
-        {
-
-            // TBD
-
-        }
-
         // Source for drag and drop between listboxes -> https://www.c-sharpcorner.com/uploadfile/dpatra/drag-and-drop-item-in-listbox-in-wpf/
 
         private void lbRelationship_PreMouseLeftButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
