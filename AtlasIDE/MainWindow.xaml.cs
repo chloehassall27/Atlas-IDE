@@ -254,12 +254,12 @@ namespace AtlasIDE
 
         void appPublish(App app)
         {
-            if (tbAppName.Text == null)
+            if (tbAppName.Text == null || tbAppName.Text.Equals(""))
             {
                 MessageBox.Show("Error: Please input name!");
                 return;
             }
-            if (lbRecipe.Items.Count != 0)
+            if (lbRecipe.Items.Count == 0)
             {
                 MessageBox.Show("Error: No Instructions!");
                 return;
@@ -338,6 +338,9 @@ namespace AtlasIDE
                 return;
             }
 
+            cond.IF = lbIF.Items.GetItemAt(0); //Need to get actual relationship/service
+            cond.THEN = lbTHEN.Items.GetItemAt(0);
+
             lbRecipe.Items.Add(("IF " + lbIF.Items.GetItemAt(0) + " THEN " + lbTHEN.Items.GetItemAt(0)));
             app.Commands.Add(cond);
 
@@ -345,6 +348,55 @@ namespace AtlasIDE
             cond.THEN = null;
             lbIF.Items.Clear();
             lbTHEN.Items.Clear();
+        }
+
+        public void Recipe_Rel_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            dragSource = parent;
+            object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+
+            if(data != null)
+            {
+                DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
+            }
+        }
+
+        public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            dragSource = parent;
+            object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+
+            if (data != null)
+            {
+                DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
+            }
+        }
+
+        public void Recipe_Drop(object sender, DragEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            object data = e.Data.GetData(typeof(string));
+            lbRecipe.Items.Add(data);
+        }
+
+        public void IF_Drop(object sender, DragEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            object data = e.Data.GetData(typeof(string));
+            if (lbIF.Items.Count > 1) { lbIF.Items.Clear(); }
+            lbIF.Items.Add(data);
+            cond.IF = data;
+        }
+
+        public void THEN_Drop(object sender, DragEventArgs e)
+        {
+            ListBox parent = (ListBox)sender;
+            object data = e.Data.GetData(typeof(string));
+            if (lbTHEN.Items.Count > 1) { lbTHEN.Items.Clear(); }
+            lbTHEN.Items.Add(data);
+            cond.THEN = data;
         }
         
 
