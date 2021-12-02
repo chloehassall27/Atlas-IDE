@@ -23,24 +23,21 @@ namespace AtlasIDE
             Networking.Window = this;
             Networking.Start();
 
-            RelationshipTweet tweet = new RelationshipTweet();
-            rel = new Relationship(tweet);
-            rel.Name = "Test Relationship";
-            rel.Category = "Category";
-            rel.Description = "Test Relation";
-            rel.FSname = "First service";
-            rel.Owner = "Entity";
-            rel.SpaceID = "123456";
-            rel.SSname = "Second service";
-            rel.ThingID = "6969";
-            rel.Type = "Software";
+            //RelationshipTweet tweet = new RelationshipTweet();
+            //rel = new Relationship(tweet);
+            //rel.Name = "Test Relationship";
+            //rel.Category = "Category";
+            //rel.Description = "Test Relation";
+            //rel.FSname = "First service";
+            //rel.Owner = "Entity";
+            //rel.SpaceID = "123456";
+            //rel.SSname = "Second service";
+            //rel.ThingID = "6969";
+            //rel.Type = "Software";
 
             lbDrop.AllowDrop = true;
 
             //lbRelationship.Items.Add(rel.Name);
-            //serviceList.ItemsSource = Networking.ServicesCollection;
-            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
-            serviceList.ItemsSource = view;
             ShowRelEdit(false);
         }
 
@@ -63,8 +60,7 @@ namespace AtlasIDE
         {
             System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType, lbRelFirstService, lbRelSecondService };
             System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType, tbRelFirst, tbRelSec };
-            string relSelecName = lbRelationship.SelectedItem.ToString();
-            rel = findRelationship(relSelecName);
+            string relSelectName = "";
 
             if (show) // Show Relationship edit form
             {
@@ -73,7 +69,9 @@ namespace AtlasIDE
                     MessageBox.Show("Error you must select a relationship to edit!");
                     return;
                 }
-                
+                relSelectName = lbRelationship.SelectedItem.ToString();
+                rel = findRelationship(relSelectName);
+
                 btRelEdit.Visibility = Visibility.Hidden;
                 btRelSave.Visibility = Visibility.Visible;
                 for (int i = 0; i < labels.Length; i++)
@@ -95,13 +93,21 @@ namespace AtlasIDE
             }
             else // Don't show
             {
+
                 btRelEdit.Visibility = Visibility.Visible;
                 btRelSave.Visibility = Visibility.Hidden;
 
-                rel = findRelationship(relSelecName);
-
                 if (initRel)
                 {
+
+                    if (lbRelationship.SelectedItem == null)
+                    {
+                        MessageBox.Show("Error you must select a relationship to edit!");
+                        return;
+                    }
+                    relSelectName = lbRelationship.SelectedItem.ToString();
+                    rel = findRelationship(relSelectName);
+
                     rel.Name = tbRelName.Text;
                     rel.Owner = tbRelOwn.Text;
                     rel.Category = tbRelCat.Text;
@@ -111,8 +117,9 @@ namespace AtlasIDE
                     rel.Type = tbRelType.Text;
                     rel.FSname = tbRelFirst.Text;
                     rel.SSname = tbRelSec.Text;
-                }
 
+                }
+             
                 initRel = true;
 
                 for (int i = 0; i < labels.Length; i++)
@@ -209,10 +216,9 @@ namespace AtlasIDE
 
         public void UpdateThings()
         {
-            //thingList.ItemsSource = null;
+            thingList.ItemsSource = null;
             thingList.ItemsSource = Networking.Things;
-            thingList.Items.Refresh();
-            thingList.UpdateLayout();
+            //thingList.UpdateLayout();
         }
         public void UpdateServices()
         {
@@ -221,11 +227,10 @@ namespace AtlasIDE
                 if (!thingIDs.Contains(service.ThingID))
                     thingIDs.Add(service.ThingID);
             thingFilterList.ItemsSource = thingIDs;
-            thingFilterList.Items.Refresh();
 
-            //serviceList.ItemsSource = null;
-            //serviceList.ItemsSource = Networking.ServicesCollection;
-            //serviceList.Items.Refresh();
+            view = CollectionViewSource.GetDefaultView(Networking.Services);
+            serviceList.ItemsSource = null;
+            serviceList.ItemsSource = view;
             //serviceList.UpdateLayout();
         }
 
@@ -243,9 +248,8 @@ namespace AtlasIDE
                     relationships.Add(relationship.Name);
 
 
-            //lbRelationship.ItemsSource = null;
+            lbRelationship.ItemsSource = null;
             lbRelationship.ItemsSource = relationships;
-            lbRelationship.Items.Refresh();
         }
 
         public void Filter()
@@ -257,8 +261,6 @@ namespace AtlasIDE
                 };
             else
                 view.Filter = null;
-
-            serviceList.Items.Refresh();
         }
 
         private void FilterChangeSelection(object sender, SelectionChangedEventArgs e)

@@ -173,8 +173,8 @@
                             <ColumnDefinition Width="41*"/>
                             <ColumnDefinition Width="699*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Content="APP" HorizontalAlignment="Left" Margin="13,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="38" Grid.Column="2"/>
-                        <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="160" Margin="18.925,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" Grid.Column="1"/>
+                        <Label Content="APP" HorizontalAlignment="Left" Margin="18,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="38" Grid.Column="2"/>
+                        <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="160" Margin="19,57,0,0" VerticalAlignment="Top" Width="130" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="4" Drop="lbDrop_Drop" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Apps" Margin="-2,-2,-2,0">
