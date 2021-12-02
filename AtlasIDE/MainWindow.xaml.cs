@@ -208,11 +208,11 @@ namespace AtlasIDE
         }
         public void UpdateServices()
         {
-            List<string> services = new List<string>();
+            List<string> thingIDs = new List<string>();
             foreach (Service service in Networking.Services)
-                if (!services.Contains(service.ThingID))
-                    services.Add(service.ThingID);
-            thingFilterList.ItemsSource = services;
+                if (!thingIDs.Contains(service.ThingID))
+                    thingIDs.Add(service.ThingID);
+            thingFilterList.ItemsSource = thingIDs;
 
             view = CollectionViewSource.GetDefaultView(Networking.Services);
             serviceList.ItemsSource = null;
@@ -220,6 +220,12 @@ namespace AtlasIDE
             //serviceList.UpdateLayout();
         }
 
+
+        //public void CallService(object sender, MouseButtonEventArgs e)
+        //{
+        //    Networking.Call((sender as StackPanel).DataContext as Service);
+        //}
+        
         public void UpdateRelationship()
         {
             List<string> relationships = new List<string>();
