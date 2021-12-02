@@ -27,6 +27,7 @@ namespace AtlasIDE
             Networking.Window = this;
             Networking.Start();
 
+            /*
             RelationshipTweet tweet = new RelationshipTweet();
             rel = new Relationship(tweet);
             rel.Name = "Test Relationship";
@@ -39,7 +40,7 @@ namespace AtlasIDE
             rel.ThingID = "6969";
             rel.Type = "Software";
 
-            RelationshipTweet tweet2 = new RelationshipTweet();
+            RelationshipTweet tweet2 = new RelationshipTweet(); //adding test relationships
             Relationship rel2 = new Relationship(tweet2);
             rel2.Name = "Test 2";
             rel2.Category = "Category";
@@ -68,15 +69,18 @@ namespace AtlasIDE
             testApp.Name = "Test App";
             lbApp.Items.Add(testApp.Name);
             lbAppMan.Items.Add(testApp.Name);
+            */
 
 
             lbDrop.AllowDrop = true;
 
+            /*
             lbRelationship.Items.Add(rel.Name);
             lbRelationship.Items.Add(rel2.Name);
             lbRelationship_Copy.Items.Add(rel.Name);
             lbRelationship_Copy.Items.Add(rel2.Name);
             lbService.Items.Add(serv.Name);
+            */
             appShow(false);
             ShowRelEdit(false);
         }
@@ -252,7 +256,7 @@ namespace AtlasIDE
         }
 
         //Fohrman recipe tab
-        private void btClear(object sender, RoutedEventArgs e)
+        private void btClear(object sender, RoutedEventArgs e) //Clear recipe
         {
             if (lbApp.SelectedItem == null)
             {
@@ -266,17 +270,17 @@ namespace AtlasIDE
             lbAppMan.Items.RemoveAt(index);
         }
 
-        private void btNew(object sender, RoutedEventArgs e)
+        private void btNew(object sender, RoutedEventArgs e) //Open recipe editor
         {
             appShow(true);
         }
 
-        private void btPublish(object sender, RoutedEventArgs e)
+        private void btPublish(object sender, RoutedEventArgs e) //Post recipe to list and close recipe editor
         {
             appPublish(app);
         }
 
-        void appPublish(App app)
+        void appPublish(App app) //Recipes are published to the global List<App> appList
         {
             if (tbAppName.Text == null || tbAppName.Text.Equals(""))
             {
@@ -305,7 +309,7 @@ namespace AtlasIDE
             appShow(false);
         }
 
-        void appShow(bool show)
+        void appShow(bool show) //Show/hide the recipe editor
         {
             System.Windows.Controls.Label[] labels = { Recipe_Rel, Recipe_Serv, Recipe_Editor, Recipe_Name, IF, THEN};
             System.Windows.Controls.ListBox[] listBoxes = { lbRelationship_Copy, lbService, lbRecipe, lbIF, lbTHEN };
@@ -354,7 +358,7 @@ namespace AtlasIDE
             }
         }
 
-        public void btAddCond(object sender, RoutedEventArgs e)
+        public void btAddCond(object sender, RoutedEventArgs e) //Add conditional statement to recipe. Conditionals are saved as Cond_Eval objects in the app's command list
         {
             if (cond.IF == null)
             {
@@ -379,7 +383,7 @@ namespace AtlasIDE
             lbTHEN.Items.Clear();
         }
 
-        public void Recipe_Rel_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        public void Recipe_Rel_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e) //Drag from relationships box in Recipes
         {
             ListBox parent = (ListBox)sender;
             dragSource = parent;
@@ -391,7 +395,7 @@ namespace AtlasIDE
             }
         }
 
-        public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e) //Drag from services box in Recipes (identical to above, used in case of future variation)
         {
             ListBox parent = (ListBox)sender;
             dragSource = parent;
@@ -403,14 +407,14 @@ namespace AtlasIDE
             }
         }
 
-        public void Recipe_Drop(object sender, DragEventArgs e)
+        public void Recipe_Drop(object sender, DragEventArgs e) //Drop into recipe box
         {
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             lbRecipe.Items.Add(data);
         }
 
-        public void IF_Drop(object sender, DragEventArgs e)
+        public void IF_Drop(object sender, DragEventArgs e) //Drop into IF box on conditional
         {
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
@@ -419,7 +423,7 @@ namespace AtlasIDE
             cond.IF = data;
         }
 
-        public void THEN_Drop(object sender, DragEventArgs e)
+        public void THEN_Drop(object sender, DragEventArgs e) //Drop into THEN box on conditional
         {
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
@@ -428,7 +432,7 @@ namespace AtlasIDE
             cond.THEN = data;
         }
 
-        public void btActivate(object sender, RoutedEventArgs e)
+        public void btActivate(object sender, RoutedEventArgs e) //Activate App in Apps tab
         {
             if (lbAppMan.SelectedItem == null)
             {
@@ -436,9 +440,14 @@ namespace AtlasIDE
                 return;
             }
 
+            //string selection = lbApp.SelectedItem.ToString();
+            //int index = lbApp.Items.IndexOf(selection);
+            //Evaluate(appsList[index])
+            //TODO: define way to evaluate relationship/service
+
             DateTime now = DateTime.Now;
-            string select_rel = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
-            lbStatus.Items.Add(select_rel);
+            string select_status = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
+            lbStatus.Items.Add(select_status);
         }
         
 

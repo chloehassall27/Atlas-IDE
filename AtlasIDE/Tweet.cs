@@ -6,12 +6,14 @@ namespace AtlasIDE
     public class App
     {
         public string Name { get; set; }
-        public List<object> Commands = new List<object>();
+        public List<object> Commands = new List<object>(); //The app's list of commands, which can be executed in order.
+        //The only two objects allowed in an app's commands list are Relationships and Services.
     }
     public class Cond_Eval
     {
         public object IF { get; set; }
         public object THEN { get; set; }
+        //The only IF and THEN objects allowed are Relationships and Services
     }
 
     public class Tweet
