@@ -15,6 +15,9 @@ namespace AtlasIDE
         public ICollectionView view;
         Relationship rel;
         Service serv;
+        App app = new App();
+        List<App> appList = new List<App>();
+        Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
 
@@ -246,10 +249,10 @@ namespace AtlasIDE
 
         private void btPublish(object sender, RoutedEventArgs e)
         {
-            appPublish();
+            appPublish(app);
         }
 
-        void appPublish()
+        void appPublish(App app)
         {
             if (tbAppName.Text == null)
             {
@@ -264,7 +267,11 @@ namespace AtlasIDE
 
             string appName = tbAppName.Text;
             lbApp.Items.Add(appName);
+            app.Name = appName;
 
+            appList.Add(app);
+            if (app.Commands.Count > 0) { app.Commands.Clear(); }
+            app.Name = null;
             MessageBox.Show("App Published!");
             appShow(false);
         }
@@ -320,16 +327,24 @@ namespace AtlasIDE
 
         public void btAddCond(object sender, RoutedEventArgs e)
         {
-            if (lbIF.Items.Count == 0)
+            if (cond.IF == null)
             {
                 MessageBox.Show("Error: Need IF Condition!");
                 return;
             }
-            if (lbTHEN.Items.Count == 0)
+            if (cond.THEN == null)
             {
                 MessageBox.Show("Error: Need THEN Statement!");
                 return;
             }
+
+            lbRecipe.Items.Add(("IF " + lbIF.Items.GetItemAt(0) + " THEN " + lbTHEN.Items.GetItemAt(0)));
+            app.Commands.Add(cond);
+
+            cond.IF = null;
+            cond.THEN = null;
+            lbIF.Items.Clear();
+            lbTHEN.Items.Clear();
         }
         
 

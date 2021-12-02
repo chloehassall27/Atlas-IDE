@@ -6,7 +6,7 @@ namespace AtlasIDE
     public class App
     {
         public string Name { get; set; }
-        public List<object> Commands { get; set; }
+        public List<object> Commands = new List<object>();
     }
     public class Cond_Eval
     {
