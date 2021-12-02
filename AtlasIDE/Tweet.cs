@@ -7,6 +7,7 @@ namespace AtlasIDE
     {
         public string Name { get; set; }
         public List<object> Commands = new List<object>(); //The app's list of commands, which can be executed in order.
+        public List<int> Inputs = new List<int>(); //The app's list of commands, which can be executed in order.
         //The only two objects allowed in an app's commands list are Relationships and Services.
     }
     public class Cond_Eval

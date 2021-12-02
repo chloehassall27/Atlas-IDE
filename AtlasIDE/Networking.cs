@@ -18,6 +18,8 @@ namespace AtlasIDE
         public static List<Service> Services { get; } = new List<Service>();
         public static ObservableCollection<Service> ServicesCollection { get; } = new ObservableCollection<Service>();
         public static MainWindow Window;
+
+        public static ObservableCollection<string> Outputs = new ObservableCollection<string>();
         public static void Start()
         {
             udpClient = new UdpClient(1235);
@@ -108,8 +110,6 @@ namespace AtlasIDE
                         }
                         break;
 
-                    // What about unbounded services?
-
                     default:
                         break;
                 }
@@ -144,6 +144,10 @@ namespace AtlasIDE
             Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
             stream.Close();
             client.Close();
+
+
+            Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
+            Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
             return response;
         }
 
@@ -180,7 +184,7 @@ namespace AtlasIDE
             Service second = findService(relationship.SSname);
             String type = relationship.Type;
 
-            if(first == null || second == null)
+            if (first == null || second == null)
             {
                 return null;
             }
@@ -211,7 +215,7 @@ namespace AtlasIDE
                     serviceResponseTweet.ServiceName = second.Name;
                     serviceResponseTweet.ServiceResult = "First Service evaluated to 0, " + second.Name + " did not run!";
                 }
-               
+
 
             }
             else if (type.Equals("Drive"))
@@ -227,7 +231,7 @@ namespace AtlasIDE
                     return null;
                 }
 
-               serviceResponseTweet = Call(second, convertedValue);
+                serviceResponseTweet = Call(second, convertedValue);
 
             }
             //else if (type.Equals("Support")) // Before Service 1, Check on Service 2
@@ -255,6 +259,11 @@ namespace AtlasIDE
             else
             {
                 serviceResponseTweet = null;
+            }
+
+            if (serviceResponseTweet != null) { 
+                Console.WriteLine(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
+                Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
             }
 
             return serviceResponseTweet;

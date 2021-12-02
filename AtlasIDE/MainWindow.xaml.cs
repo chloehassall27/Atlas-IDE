@@ -72,9 +72,10 @@ namespace AtlasIDE
             */
 
 
-            lbDrop.AllowDrop = true;
+            //lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
+            OutputResults.ItemsSource = Networking.Outputs;
 
             /*
             lbRelationship.Items.Add(rel.Name);
@@ -300,15 +301,16 @@ namespace AtlasIDE
             string appName = tbAppName.Text;
             lbApp.Items.Add(appName);
             app.Name = appName;
+            Console.WriteLine(app.Commands.Count);
 
             appList.Add(app);
             lbAppMan.Items.Add(appName);
-            if (app.Commands.Count > 0) { app.Commands.Clear(); }
+            //if (app.Commands.Count > 0) { app.Commands.Clear(); }
             lbRecipe.Items.Clear();
             lbIF.Items.Clear();
             lbTHEN.Items.Clear();
             tbAppName.Clear();
-            app.Name = null;
+            //app.Name = null;
             MessageBox.Show("App Published!");
             appShow(false);
         }
@@ -416,6 +418,7 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             lbRecipe.Items.Add(data);
+            app.Commands.Add(data);
         }
 
         public void IF_Drop(object sender, DragEventArgs e) //Drop into IF box on conditional
@@ -444,9 +447,10 @@ namespace AtlasIDE
                 return;
             }
 
-            //string selection = lbApp.SelectedItem.ToString();
-            //int index = lbApp.Items.IndexOf(selection);
-            //Evaluate(appList[index]);
+            string selection = lbAppMan.SelectedItem.ToString();
+            int index = lbApp.Items.IndexOf(selection);
+            Console.WriteLine(appList[index].Commands.Count);
+            Evaluate(appList[index]);
             //TODO: define way to evaluate relationship/service
 
             DateTime now = DateTime.Now;
@@ -456,6 +460,62 @@ namespace AtlasIDE
         
 
         // Hassall Service/Thing Code
+
+        public void Evaluate(App app)
+        {
+
+            Console.WriteLine(app.Commands.Count);
+            foreach (object evaluatable in app.Commands)
+            {
+                if (evaluatable.GetType() == typeof(Cond_Eval))
+                {
+
+                    object cond1 = (evaluatable as Cond_Eval).IF;
+                    //Console.Write("conditional");
+                    ServiceResponseTweet res = new ServiceResponseTweet();
+                    Service service = Networking.Services.Find(x => x.Name == (cond1 as string));
+                    if (service != null)
+                        res = Networking.Call(service);
+
+                    foreach (Thing thing in Networking.Things)
+                    {
+                        Relationship rel = thing.Relationships.Find(x => x.Name == (cond1 as string));
+                        if (rel != null)
+                            res = Networking.EvalauteRelationship(rel);
+                    }
+
+                    if (res.ServiceResult == null || res.ServiceResult == "0")
+                        return;
+
+                    object cond2 = (evaluatable as Cond_Eval).THEN;
+                    //Console.Write("conditional");
+                    service = Networking.Services.Find(x => x.Name == (cond2 as string));
+                    if (service != null)
+                        Networking.Call(service);
+
+                    foreach (Thing thing in Networking.Things)
+                    {
+                        Relationship rel = thing.Relationships.Find(x => x.Name == (cond2 as string));
+                        if (rel != null)
+                            Networking.EvalauteRelationship(rel);
+                    }
+                }
+
+                else
+                {
+                    Service service = Networking.Services.Find(x => x.Name == (evaluatable as string));
+                    if (service != null)
+                        Networking.Call(service);
+
+                    foreach (Thing thing in Networking.Things) {
+                        Relationship rel = thing.Relationships.Find(x => x.Name == (evaluatable as string));
+                        if (rel != null)
+                            Networking.EvalauteRelationship(rel);
+                    }
+
+                }
+            }
+        }
         public void UpdateThings()
         {
             thingList.ItemsSource = null;
@@ -515,7 +575,5 @@ namespace AtlasIDE
         {
             Filter();
         }
-
-
     }
 }
