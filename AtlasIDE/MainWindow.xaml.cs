@@ -44,6 +44,8 @@ namespace AtlasIDE
         }
 
 
+        // Justin Code
+
         private void btRelEdit_Click(object sender, RoutedEventArgs e)
         {
             ShowRelEdit(true);
@@ -57,6 +59,20 @@ namespace AtlasIDE
             if (show) // Show Relationship edit form
             {
                 if(lbRelationship.SelectedItem == null)
+        private void btRelSave_Click(object sender, RoutedEventArgs e)
+        {
+            ShowRelEdit(false);
+            MessageBox.Show("Relationship saved!");
+        }
+
+        void ShowRelEdit(bool show) // Controller that hides or shows edit form
+        {
+            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType , lbRelFirstService, lbRelSecondService};
+            System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType, tbRelFirst, tbRelSec };
+
+            if (show) // Show Relationship edit form
+            {
+                if (lbRelationship.SelectedItem == null)
 
                 {
                     MessageBox.Show("Error you must select a relationship to edit!");
@@ -81,6 +97,8 @@ namespace AtlasIDE
                 tbRelThing.Text = rel.ThingID;
                 tbRelSpace.Text = rel.SpaceID;
                 tbRelType.Text = rel.Type;
+                tbRelFirst.Text = rel.FSname;
+                tbRelSec.Text = rel.SSname;
 
             }
             else // Don't show
@@ -97,6 +115,9 @@ namespace AtlasIDE
                     rel.ThingID = tbRelThing.Text;
                     rel.SpaceID = tbRelSpace.Text;
                     rel.Type = tbRelType.Text;
+                    rel.FSname = tbRelFirst.Text;
+                    rel.SSname = tbRelSec.Text;
+
                 }
 
                 initRel = true;
@@ -194,6 +215,72 @@ namespace AtlasIDE
             Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 2));
         }
 
+        // Source for drag and drop between listboxes -> https://www.c-sharpcorner.com/uploadfile/dpatra/drag-and-drop-item-in-listbox-in-wpf/
+
+        private void lbRelationship_PreMouseLeftButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            System.Windows.Controls.ListBox parent = (System.Windows.Controls.ListBox)sender;
+            dragSource = parent;
+            object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+
+            if (data != null)
+            {
+                DragDrop.DoDragDrop(parent, data, DragDropEffects.Move);
+            }
+
+        }
+
+        private static object GetDataFromListBox(System.Windows.Controls.ListBox source, Point point)
+        {
+            UIElement element = source.InputHitTest(point) as UIElement;
+            if (element != null)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = System.Windows.Media.VisualTreeHelper.GetParent(element) as UIElement;
+                    }
+
+                    if (element == source)
+                    {
+                        return null;
+                    }
+                }
+
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
+
+            return null;
+        }
+
+        private void lbDrop_Drop(object sender, DragEventArgs e)
+        {
+            System.Windows.Controls.ListBox parent = (System.Windows.Controls.ListBox)sender;
+            object data = e.Data.GetData(typeof(string));
+
+            parent.Items.Add(data);
+
+        }
+
+        private void recipe_DragOver(object sender, DragEventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 3));
+        }
+
+        private void Relationships_DragOver(object sender, DragEventArgs e)
+        {
+            Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 2));
+        }
+
+        // Kyle Service/Thing Code
+
         public void UpdateThings()
         {
             thingList.ItemsSource = null;
@@ -214,6 +301,18 @@ namespace AtlasIDE
             //serviceList.UpdateLayout();
         }
 
+        public void UpdateRelationship()
+        {
+            List<string> relationships = new List<string>();
+            foreach (Thing thing in Networking.Things)
+                foreach (Relationship relationship in thing.Relationships)
+                    relationships.Add(relationship.Name);
+
+
+            lbRelationship.ItemsSource = null;
+            lbRelationship.ItemsSource = relationships;
+        }
+
         public void Filter()
         {
             if (thingFilterList.SelectedItems.Count > 0)
@@ -229,5 +328,7 @@ namespace AtlasIDE
         {
             Filter();
         }
+
+ 
     }
 }
