@@ -1,7 +1,19 @@
 ﻿using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AtlasIDE
 {
+    public class App
+    {
+        public string Name { get; set; }
+        public List<object> Commands { get; set; }
+    }
+    public class Cond_Eval
+    {
+        public object IF { get; set; }
+        public object THEN { get; set; }
+    }
+
     public class Tweet
     {
         [JsonProperty(PropertyName = "Tweet Type")]

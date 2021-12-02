@@ -14,6 +14,7 @@ namespace AtlasIDE
     {
         public ICollectionView view;
         Relationship rel;
+        Service serv;
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
 
@@ -35,10 +36,44 @@ namespace AtlasIDE
             rel.ThingID = "6969";
             rel.Type = "Software";
 
+            RelationshipTweet tweet2 = new RelationshipTweet();
+            Relationship rel2 = new Relationship(tweet2);
+            rel2.Name = "Test 2";
+            rel2.Category = "Category";
+            rel2.Description = "Test Relation";
+            rel2.FSname = "First service";
+            rel2.Owner = "Entity";
+            rel2.SpaceID = "123456";
+            rel2.SSname = "Second service";
+            rel2.ThingID = "6969";
+            rel2.Type = "Software";
+
+            ServiceTweet servtweet = new ServiceTweet();
+            serv = new Service(servtweet);
+            serv.Name = "Check_Button";
+            serv.EntityID = "357179";
+            serv.ThingID = "6969";
+            serv.SpaceID = "123456";
+            serv.Vendor = "Pied_Pipers";
+            serv.API = "ATLAS";
+            serv.Type = "Report";
+            serv.AppCategory = "category";
+            serv.Description = "description";
+            serv.Keywords = "button";
+
+            App testApp = new App();
+            testApp.Name = "Test App";
+            lbApp.Items.Add(testApp.Name);
+
+
             lbDrop.AllowDrop = true;
 
             lbRelationship.Items.Add(rel.Name);
+            lbRelationship.Items.Add(rel2.Name);
             lbRelationship_Copy.Items.Add(rel.Name);
+            lbRelationship_Copy.Items.Add(rel2.Name);
+            lbService.Items.Add(serv.Name);
+            appShow(false);
             ShowRelEdit(false);
         }
 
@@ -191,7 +226,111 @@ namespace AtlasIDE
         }
 
         //Fohrman recipe tab
+        private void btClear(object sender, RoutedEventArgs e)
+        {
+            if (lbApp.SelectedItem == null)
+            {
+                MessageBox.Show("Error: No App Selected!");
+                return;
+            }
+            string select_rel = lbApp.SelectedItem.ToString();
 
+            int index = lbApp.Items.IndexOf(select_rel);
+            lbApp.Items.RemoveAt(index);
+        }
+
+        private void btNew(object sender, RoutedEventArgs e)
+        {
+            appShow(true);
+        }
+
+        private void btPublish(object sender, RoutedEventArgs e)
+        {
+            appPublish();
+        }
+
+        void appPublish()
+        {
+            if (tbAppName.Text == null)
+            {
+                MessageBox.Show("Error: Please input name!");
+                return;
+            }
+            if (lbRecipe.Items.Count != 0)
+            {
+                MessageBox.Show("Error: No Instructions!");
+                return;
+            }
+
+            string appName = tbAppName.Text;
+            lbApp.Items.Add(appName);
+
+            MessageBox.Show("App Published!");
+            appShow(false);
+        }
+
+        void appShow(bool show)
+        {
+            System.Windows.Controls.Label[] labels = { Recipe_Rel, Recipe_Serv, Recipe_Editor, Recipe_Name, IF, THEN};
+            System.Windows.Controls.ListBox[] listBoxes = { lbRelationship_Copy, lbService, lbRecipe, lbIF, lbTHEN };
+            System.Windows.Controls.TextBox[] textBoxes = {tbAppName};
+            System.Windows.Controls.Button[] buttons = { bt_Publish, bt_AddCond };
+
+            if (show) // Show Recipe edit form
+            {
+                for (int i = 0; i < labels.Length; i++)
+                {
+                    labels[i].Visibility = Visibility.Visible;
+                }
+                for (int i = 0; i < listBoxes.Length; i++)
+                {
+                    listBoxes[i].Visibility = Visibility.Visible;
+                }
+                for (int i = 0; i < textBoxes.Length; i++)
+                {
+                    textBoxes[i].Visibility = Visibility.Visible;
+                }
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    buttons[i].Visibility = Visibility.Visible;
+                }
+            }
+            else // Don't show
+            {
+                //Create app and append to list
+
+                for (int i = 0; i < labels.Length; i++)
+                {
+                    labels[i].Visibility = Visibility.Hidden;
+                }
+                for (int i = 0; i < listBoxes.Length; i++)
+                {
+                    listBoxes[i].Visibility = Visibility.Hidden;
+                }
+                for (int i = 0; i < textBoxes.Length; i++)
+                {
+                    textBoxes[i].Visibility = Visibility.Hidden;
+                }
+                for (int i = 0; i < buttons.Length; i++)
+                {
+                    buttons[i].Visibility = Visibility.Hidden;
+                }
+            }
+        }
+
+        public void btAddCond(object sender, RoutedEventArgs e)
+        {
+            if (lbIF.Items.Count == 0)
+            {
+                MessageBox.Show("Error: Need IF Condition!");
+                return;
+            }
+            if (lbTHEN.Items.Count == 0)
+            {
+                MessageBox.Show("Error: Need THEN Statement!");
+                return;
+            }
+        }
         
 
         // Kyle Service/Thing Code
