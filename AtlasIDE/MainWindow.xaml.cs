@@ -11,7 +11,7 @@ namespace AtlasIDE
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {
+    { 
         public ICollectionView view;
         Relationship rel;
         bool initRel = false;
@@ -63,6 +63,8 @@ namespace AtlasIDE
         {
             System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType, lbRelFirstService, lbRelSecondService };
             System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType, tbRelFirst, tbRelSec };
+            string relSelecName = lbRelationship.SelectedItem.ToString();
+            rel = findRelationship(relSelecName);
 
             if (show) // Show Relationship edit form
             {
@@ -71,10 +73,7 @@ namespace AtlasIDE
                     MessageBox.Show("Error you must select a relationship to edit!");
                     return;
                 }
-                string select_rel = lbRelationship.SelectedItem.ToString();
-
-                int index = lbRelationship.Items.IndexOf(select_rel); // Use this later when I know exactly how I'm getting relationships
-
+                
                 btRelEdit.Visibility = Visibility.Hidden;
                 btRelSave.Visibility = Visibility.Visible;
                 for (int i = 0; i < labels.Length; i++)
@@ -99,6 +98,8 @@ namespace AtlasIDE
                 btRelEdit.Visibility = Visibility.Visible;
                 btRelSave.Visibility = Visibility.Hidden;
 
+                rel = findRelationship(relSelecName);
+
                 if (initRel)
                 {
                     rel.Name = tbRelName.Text;
@@ -122,6 +123,17 @@ namespace AtlasIDE
                 }
 
             }
+        }
+
+        Relationship findRelationship(string name)
+        {
+
+            foreach (Thing thing in Networking.Things)
+                foreach (Relationship relationship in thing.Relationships)
+                    if (relationship.Name.Equals(name))
+                        return relationship;
+
+            return null;
         }
 
         // Source for drag and drop between listboxes -> https://www.c-sharpcorner.com/uploadfile/dpatra/drag-and-drop-item-in-listbox-in-wpf/
