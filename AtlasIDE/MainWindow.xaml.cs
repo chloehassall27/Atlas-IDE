@@ -27,17 +27,17 @@ namespace AtlasIDE
             Networking.Window = this;
             Networking.Start();
 
-            //RelationshipTweet tweet = new RelationshipTweet();
-            //rel = new Relationship(tweet);
-            //rel.Name = "Test Relationship";
-            //rel.Category = "Category";
-            //rel.Description = "Test Relation";
-            //rel.FSname = "First service";
-            //rel.Owner = "Entity";
-            //rel.SpaceID = "123456";
-            //rel.SSname = "Second service";
-            //rel.ThingID = "6969";
-            //rel.Type = "Software";
+            RelationshipTweet tweet = new RelationshipTweet();
+            rel = new Relationship(tweet);
+            rel.Name = "Test Relationship";
+            rel.Category = "Category";
+            rel.Description = "Test Relation";
+            rel.FSname = "First service";
+            rel.Owner = "Entity";
+            rel.SpaceID = "123456";
+            rel.SSname = "Second service";
+            rel.ThingID = "6969";
+            rel.Type = "Software";
 
             RelationshipTweet tweet2 = new RelationshipTweet();
             Relationship rel2 = new Relationship(tweet2);
@@ -262,6 +262,7 @@ namespace AtlasIDE
 
             int index = lbApp.Items.IndexOf(select_rel);
             lbApp.Items.RemoveAt(index);
+            lbAppMan.Items.RemoveAt(index);
         }
 
         private void btNew(object sender, RoutedEventArgs e)
@@ -292,6 +293,7 @@ namespace AtlasIDE
             app.Name = appName;
 
             appList.Add(app);
+            lbAppMan.Items.Add(appName);
             if (app.Commands.Count > 0) { app.Commands.Clear(); }
             app.Name = null;
             MessageBox.Show("App Published!");

@@ -193,8 +193,16 @@
                         <Button x:Name="bt_AddCond" Content="Add" Click ="btAddCond" Margin="422.4,289,227,77" Grid.Column="2"/>
                     </Grid>
                 </TabItem>
-                <TabItem Header="Apps" Margin="-2,-2,-2,0">
                     <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="0*"/>
+                            <ColumnDefinition Width="48*"/>
+                            <ColumnDefinition Width="41*"/>
+                            <ColumnDefinition Width="699*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Applications" HorizontalAlignment="Left" Margin="3.2,15,0,0" VerticalAlignment="Top" Width="38" Grid.Column="2" Grid.ColumnSpan="2"/>
+                        <ListBox x:Name="lbAppMan" Height="173" Margin="10,41,658,0" VerticalAlignment="Top" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3"/>
+                        <Button x:Name="btAppStart" Content="New" Click="btNew" Margin="10,222,30.6,144" Grid.ColumnSpan="2"/>
                     </Grid>
                 </TabItem>
             </TabControl>
