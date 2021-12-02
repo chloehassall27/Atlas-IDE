@@ -37,7 +37,10 @@ namespace AtlasIDE
 
             lbDrop.AllowDrop = true;
 
-            lbRelationship.Items.Add(rel.Name);
+            //lbRelationship.Items.Add(rel.Name);
+            //serviceList.ItemsSource = Networking.ServicesCollection;
+            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
+            serviceList.ItemsSource = view;
             ShowRelEdit(false);
         }
 
@@ -194,9 +197,10 @@ namespace AtlasIDE
 
         public void UpdateThings()
         {
-            thingList.ItemsSource = null;
+            //thingList.ItemsSource = null;
             thingList.ItemsSource = Networking.Things;
-            //thingList.UpdateLayout();
+            thingList.Items.Refresh();
+            thingList.UpdateLayout();
         }
         public void UpdateServices()
         {
@@ -205,10 +209,11 @@ namespace AtlasIDE
                 if (!thingIDs.Contains(service.ThingID))
                     thingIDs.Add(service.ThingID);
             thingFilterList.ItemsSource = thingIDs;
+            thingFilterList.Items.Refresh();
 
-            view = CollectionViewSource.GetDefaultView(Networking.Services);
-            serviceList.ItemsSource = null;
-            serviceList.ItemsSource = view;
+            //serviceList.ItemsSource = null;
+            //serviceList.ItemsSource = Networking.ServicesCollection;
+            //serviceList.Items.Refresh();
             //serviceList.UpdateLayout();
         }
 
@@ -226,8 +231,9 @@ namespace AtlasIDE
                     relationships.Add(relationship.Name);
 
 
-            lbRelationship.ItemsSource = null;
+            //lbRelationship.ItemsSource = null;
             lbRelationship.ItemsSource = relationships;
+            lbRelationship.Items.Refresh();
         }
 
         public void Filter()
@@ -239,6 +245,8 @@ namespace AtlasIDE
                 };
             else
                 view.Filter = null;
+
+            serviceList.Items.Refresh();
         }
 
         private void FilterChangeSelection(object sender, SelectionChangedEventArgs e)

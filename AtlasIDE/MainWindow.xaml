@@ -76,19 +76,23 @@
                 </TabItem>
                 <TabItem Header="Services">
                     <StackPanel VerticalAlignment="Stretch" >
-                        <ListView Name="thingFilterList" SelectionChanged="FilterChangeSelection" SelectionMode="Multiple">
-                            <ListView.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal"></StackPanel>
-                                </ItemsPanelTemplate>
-                            </ListView.ItemsPanel>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding}" 
-                                    FontSize="16" TextAlignment="Center" VerticalAlignment="Top" />
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="Thing Filter: " 
+                                        FontSize="16" TextAlignment="Center" VerticalAlignment="Center" Height="26" />
+                            <ListView x:Name="thingFilterList" SelectionChanged="FilterChangeSelection" SelectionMode="Multiple">
+                                <ListView.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListView.ItemsPanel>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" 
+                                        FontSize="16" TextAlignment="Center" VerticalAlignment="Top" />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
                         <ListBox x:Name="serviceList" HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Height="366" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" >
                             <ListBox.ItemTemplate>
                                 <DataTemplate>
@@ -164,12 +168,13 @@
                 <TabItem x:Name="tiRecipe" Header="Recipes" AllowDrop="True" DragOver="recipe_DragOver">
                     <Grid Background="#FFE5E5E5">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="47*"/>
-                            <ColumnDefinition Width="40*"/>
-                            <ColumnDefinition Width="679*"/>
+                            <ColumnDefinition Width="0*"/>
+                            <ColumnDefinition Width="48*"/>
+                            <ColumnDefinition Width="41*"/>
+                            <ColumnDefinition Width="699*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Content="APP" HorizontalAlignment="Left" Margin="13,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="38" Grid.Column="1"/>
-                        <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="160" Margin="19,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3"/>
+                        <Label Content="APP" HorizontalAlignment="Left" Margin="13,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="38" Grid.Column="2"/>
+                        <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="160" Margin="18.925,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" Grid.Column="1"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Apps" Margin="-2,-2,-2,0">

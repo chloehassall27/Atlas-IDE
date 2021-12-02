@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,6 +16,7 @@ namespace AtlasIDE
         private static UdpClient udpClient;
         public static List<Thing> Things { get; } = new List<Thing>();
         public static List<Service> Services { get; } = new List<Service>();
+        public static ObservableCollection<Service> ServicesCollection { get; } = new ObservableCollection<Service>();
         public static MainWindow Window;
         public static void Start()
         {
@@ -83,6 +85,10 @@ namespace AtlasIDE
                             var service = new Service(serviceTweet);
                             entity.Services.Add(service);
                             Services.Add(service);
+                            Application.Current.Dispatcher.Invoke((Action)delegate
+                            {
+                                ServicesCollection.Add(service);
+                            });
                             Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         }
                         break;
