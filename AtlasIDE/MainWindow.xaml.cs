@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Input;
 
 namespace AtlasIDE
 {
@@ -18,13 +17,12 @@ namespace AtlasIDE
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
 
-
         public MainWindow()
         {
             InitializeComponent();
             Networking.Window = this;
             Networking.Start();
-            
+
             RelationshipTweet tweet = new RelationshipTweet();
             rel = new Relationship(tweet);
             rel.Name = "Test Relationship";
@@ -51,14 +49,7 @@ namespace AtlasIDE
             ShowRelEdit(true);
         }
 
-        void ShowRelEdit(bool show) // Controller that hides or shows edit form
-        {
-            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType };
-            System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType };
 
-            if (show) // Show Relationship edit form
-            {
-                if(lbRelationship.SelectedItem == null)
         private void btRelSave_Click(object sender, RoutedEventArgs e)
         {
             ShowRelEdit(false);
@@ -67,13 +58,12 @@ namespace AtlasIDE
 
         void ShowRelEdit(bool show) // Controller that hides or shows edit form
         {
-            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType , lbRelFirstService, lbRelSecondService};
+            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType, lbRelFirstService, lbRelSecondService };
             System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType, tbRelFirst, tbRelSec };
 
             if (show) // Show Relationship edit form
             {
                 if (lbRelationship.SelectedItem == null)
-
                 {
                     MessageBox.Show("Error you must select a relationship to edit!");
                     return;
@@ -117,7 +107,6 @@ namespace AtlasIDE
                     rel.Type = tbRelType.Text;
                     rel.FSname = tbRelFirst.Text;
                     rel.SSname = tbRelSec.Text;
-
                 }
 
                 initRel = true;
@@ -132,18 +121,11 @@ namespace AtlasIDE
             }
         }
 
-        private void btRelSave_Click(object sender, RoutedEventArgs e)
-        {
-            ShowRelEdit(false);
-            MessageBox.Show("Relationship saved!");
-        }
-
-
 
         private void DragOver_Recipe(object sender, DragEventArgs e)
         {
 
-           // TBD
+            // TBD
 
         }
 
@@ -202,70 +184,6 @@ namespace AtlasIDE
             dragSource.Items.Remove(data);
 
             parent.Items.Add(data);
-            
-        }
-
-        private void recipe_DragOver(object sender, DragEventArgs e)
-        {
-            Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 3));
-        }
-
-        private void Relationships_DragOver(object sender, DragEventArgs e)
-        {
-            Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 2));
-        }
-
-        // Source for drag and drop between listboxes -> https://www.c-sharpcorner.com/uploadfile/dpatra/drag-and-drop-item-in-listbox-in-wpf/
-
-        private void lbRelationship_PreMouseLeftButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            System.Windows.Controls.ListBox parent = (System.Windows.Controls.ListBox)sender;
-            dragSource = parent;
-            object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
-
-            if (data != null)
-            {
-                DragDrop.DoDragDrop(parent, data, DragDropEffects.Move);
-            }
-
-        }
-
-        private static object GetDataFromListBox(System.Windows.Controls.ListBox source, Point point)
-        {
-            UIElement element = source.InputHitTest(point) as UIElement;
-            if (element != null)
-            {
-                object data = DependencyProperty.UnsetValue;
-                while (data == DependencyProperty.UnsetValue)
-                {
-                    data = source.ItemContainerGenerator.ItemFromContainer(element);
-
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        element = System.Windows.Media.VisualTreeHelper.GetParent(element) as UIElement;
-                    }
-
-                    if (element == source)
-                    {
-                        return null;
-                    }
-                }
-
-                if (data != DependencyProperty.UnsetValue)
-                {
-                    return data;
-                }
-            }
-
-            return null;
-        }
-
-        private void lbDrop_Drop(object sender, DragEventArgs e)
-        {
-            System.Windows.Controls.ListBox parent = (System.Windows.Controls.ListBox)sender;
-            object data = e.Data.GetData(typeof(string));
-
-            parent.Items.Add(data);
 
         }
 
@@ -278,6 +196,7 @@ namespace AtlasIDE
         {
             Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 2));
         }
+        
 
         // Kyle Service/Thing Code
 
@@ -329,6 +248,6 @@ namespace AtlasIDE
             Filter();
         }
 
- 
+
     }
 }
