@@ -1,13 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Newtonsoft.Json;
 
 namespace AtlasIDE
 {
@@ -36,10 +35,12 @@ namespace AtlasIDE
                 var Message = Encoding.Default.GetString(data);
 
                 var tweet = JsonConvert.DeserializeObject<Tweet>(Message);
-                switch (tweet.TweetType) {
+                switch (tweet.TweetType)
+                {
                     case "Identity_Thing":
                         var thingTweet = JsonConvert.DeserializeObject<IdentityThingTweet>(Message);
-                        if (Things.Find(x => x.ID == tweet.ThingID) == null) {
+                        if (Things.Find(x => x.ID == tweet.ThingID) == null)
+                        {
                             Console.WriteLine("New thing found!");
                             Things.Add(new Thing(thingTweet));
                             Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
@@ -48,9 +49,10 @@ namespace AtlasIDE
                     case "Identity_Language":
                         var langTweet = JsonConvert.DeserializeObject<IdentityLanguageTweet>(Message);
                         var thing = Things.Find(x => x.ID == langTweet.ThingID);
-                        if (thing != null) { 
+                        if (thing != null)
+                        {
                             thing.AddNetworkInfo(langTweet);
-                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle); 
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
                         }
                         break;
                     case "Identity_Entity":
@@ -95,6 +97,8 @@ namespace AtlasIDE
                         {
                             Console.WriteLine("New relationship found!");
                             thing.Relationships.Add(new Relationship(relationshipTweet));
+
+                            Application.Current.Dispatcher.Invoke(Window.UpdateRelationship, DispatcherPriority.ContextIdle);
                         }
                         break;
 

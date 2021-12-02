@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace AtlasIDE
+﻿namespace AtlasIDE
 {
     class Relationship
     {
@@ -15,7 +9,9 @@ namespace AtlasIDE
         public string Category { get; set; }
         public string Type { get; set; }
         public string Description { get; set; }
+        // First Service Name
         public string FSname { get; set; }
+        // Second Service Name
         public string SSname { get; set; }
 
         public Relationship(RelationshipTweet tweet)
