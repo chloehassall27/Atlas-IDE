@@ -38,6 +38,7 @@ namespace AtlasIDE
             lbDrop.AllowDrop = true;
 
             lbRelationship.Items.Add(rel.Name);
+            lbRelationship_Copy.Items.Add(rel.Name);
             ShowRelEdit(false);
         }
 
@@ -188,6 +189,9 @@ namespace AtlasIDE
         {
             Dispatcher.BeginInvoke((Action)(() => tabControl.SelectedIndex = 2));
         }
+
+        //Fohrman recipe tab
+
         
 
         // Kyle Service/Thing Code
@@ -208,7 +212,9 @@ namespace AtlasIDE
 
             view = CollectionViewSource.GetDefaultView(Networking.Services);
             serviceList.ItemsSource = null;
+            lbService.ItemsSource = null;
             serviceList.ItemsSource = view;
+            lbService.ItemsSource = view;
             //serviceList.UpdateLayout();
         }
 
@@ -227,7 +233,9 @@ namespace AtlasIDE
 
 
             lbRelationship.ItemsSource = null;
+            lbRelationship_Copy.ItemsSource = null;
             lbRelationship.ItemsSource = relationships;
+            lbRelationship_Copy.ItemsSource = relationships;
         }
 
         public void Filter()

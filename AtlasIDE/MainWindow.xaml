@@ -168,8 +168,14 @@
                             <ColumnDefinition Width="40*"/>
                             <ColumnDefinition Width="679*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Content="APP" HorizontalAlignment="Left" Margin="13,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="38" Grid.Column="1"/>
-                        <ListBox x:Name="lbApp" HorizontalAlignment="Left" Height="160" Margin="19,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3"/>
+                        <Label Content="APPS" HorizontalAlignment="Left" Margin="3.2,91,0,0" VerticalAlignment="Top" Width="38" Grid.Column="1" Grid.ColumnSpan="2"/>
+                        <ListBox x:Name="lbApp" Height="154" Margin="10,122,658,0" VerticalAlignment="Top" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3"/>
+                        <Button x:Name="btAppNew" Content="New" Margin="10,281,30.6,85" Grid.ColumnSpan="2"/>
+                        <Button x:Name="btAppClear" Content="Clear" Margin="32.2,281,658,85" Grid.ColumnSpan="2" Grid.Column="1"/>
+                        <Label Content="Relationships" HorizontalAlignment="Left" Margin="589.4,188,0,0" VerticalAlignment="Top" Width="82" Grid.Column="2"/>
+                        <ListBox x:Name="lbRelationship_Copy" HorizontalAlignment="Left" Height="130" Margin="568.4,219,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" Grid.Column="2" />
+                        <Label Content="Services" HorizontalAlignment="Center" Margin="603.4,15,41,0" VerticalAlignment="Top" Width="54" Grid.Column="2"/>
+                        <ListBox x:Name="lbService" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" Grid.Column="2" Margin="568.4,41,10,225"/>
                     </Grid>
                 </TabItem>
                 <TabItem Header="Apps" Margin="-2,-2,-2,0">
