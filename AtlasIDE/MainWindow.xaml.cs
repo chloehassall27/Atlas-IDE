@@ -121,14 +121,6 @@ namespace AtlasIDE
             }
         }
 
-
-        private void DragOver_Recipe(object sender, DragEventArgs e)
-        {
-
-            // TBD
-
-        }
-
         // Source for drag and drop between listboxes -> https://www.c-sharpcorner.com/uploadfile/dpatra/drag-and-drop-item-in-listbox-in-wpf/
 
         private void lbRelationship_PreMouseLeftButton(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -208,11 +200,11 @@ namespace AtlasIDE
         }
         public void UpdateServices()
         {
-            List<string> services = new List<string>();
+            List<string> thingIDs = new List<string>();
             foreach (Service service in Networking.Services)
-                if (!services.Contains(service.ThingID))
-                    services.Add(service.ThingID);
-            thingFilterList.ItemsSource = services;
+                if (!thingIDs.Contains(service.ThingID))
+                    thingIDs.Add(service.ThingID);
+            thingFilterList.ItemsSource = thingIDs;
 
             view = CollectionViewSource.GetDefaultView(Networking.Services);
             serviceList.ItemsSource = null;
@@ -220,6 +212,12 @@ namespace AtlasIDE
             //serviceList.UpdateLayout();
         }
 
+
+        //public void CallService(object sender, MouseButtonEventArgs e)
+        //{
+        //    Networking.Call((sender as StackPanel).DataContext as Service);
+        //}
+        
         public void UpdateRelationship()
         {
             List<string> relationships = new List<string>();
