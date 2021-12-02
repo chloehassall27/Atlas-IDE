@@ -75,7 +75,6 @@ namespace AtlasIDE
             lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
-            lbService.ItemsSource = view;
 
             /*
             lbRelationship.Items.Add(rel.Name);
@@ -447,7 +446,7 @@ namespace AtlasIDE
 
             //string selection = lbApp.SelectedItem.ToString();
             //int index = lbApp.Items.IndexOf(selection);
-            //Evaluate(appsList[index])
+            //Evaluate(appList[index]);
             //TODO: define way to evaluate relationship/service
 
             DateTime now = DateTime.Now;
@@ -457,7 +456,6 @@ namespace AtlasIDE
         
 
         // Hassall Service/Thing Code
-
         public void UpdateThings()
         {
             thingList.ItemsSource = null;
@@ -472,9 +470,13 @@ namespace AtlasIDE
                     thingIDs.Add(service.ThingID);
             thingFilterList.ItemsSource = thingIDs;
 
+            List<string> services = new List<string>();
+            foreach (Service service in Networking.ServicesCollection)
+                services.Add(service.Name);
+
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.Items.Refresh();
-            lbService.Items.Refresh();
+            lbService.ItemsSource = services;
             //serviceList.UpdateLayout();
         }
 
