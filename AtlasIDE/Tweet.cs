@@ -14,6 +14,8 @@ namespace AtlasIDE
     {
         public string func { get; set; }
         public string arg { get; set; }
+
+        public Command IF, THEN;
         
     }
 
