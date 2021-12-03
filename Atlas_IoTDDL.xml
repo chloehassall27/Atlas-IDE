@@ -146,8 +146,8 @@ state = digitalRead(17);
 					<Establisher></Establisher>
 					<Description></Description>
 					<type>drive</type>
-					<Input1>test</Input1>
-					<Input2>test2</Input2>
+					<Input1>Check_Button</Input1>
+					<Input2>Set_LED</Input2>
 				</Relationship_1>
 				<Number_Relationships>1</Number_Relationships>
 			</Relationships>

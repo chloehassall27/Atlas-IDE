@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,11 +17,13 @@ namespace AtlasIDE
         Relationship rel;
         //Service serv;
         App app = new App();
-        bool box = false;
+        bool box = true;
+        bool badlyNamedBoolean = false;
         List<App> appList = new List<App>();
         Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
+        ObservableCollection<AppOutput> Outputs = new ObservableCollection<AppOutput>();
 
         public MainWindow()
         {
@@ -70,13 +73,21 @@ namespace AtlasIDE
             testApp.Name = "Test App";
             lbApp.Items.Add(testApp.Name);
             lbAppMan.Items.Add(testApp.Name);
+            */
 
+
+            //lbDrop.AllowDrop = true;
+            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
+            serviceList.ItemsSource = view;
+            OutputResults.ItemsSource = Outputs;
+
+            /*
             lbRelationship_Copy.Items.Add(rel.Name);
             lbRelationship_Copy.Items.Add(rel2.Name);
             lbService.Items.Add(serv.Name);
             */
 
-            lbDrop.AllowDrop = true;
+            //lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
             
@@ -101,8 +112,8 @@ namespace AtlasIDE
 
         void ShowRelEdit(bool show) // Controller that hides or shows edit form
         {
-            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType, lbRelFirstService, lbRelSecondService };
-            System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType, tbRelFirst, tbRelSec };
+            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelDes, lbRelThing, lbRelSpace, lbRelFirstService, lbRelSecondService, lbRelFSArgs, lbRelSSArgs };
+            System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelDescription, tbRelThing, tbRelSpace, tbRelFirst, tbRelSec, tbRelFirstArgs, tbRelSecondArgs };
             string relSelectName = "";
 
             if (show) // Show Relationship edit form
@@ -123,15 +134,21 @@ namespace AtlasIDE
                     textBoxes[i].Visibility = Visibility.Visible;
                 }
 
+                lbRelType.Visibility = Visibility.Visible;
+                cbType.Visibility = Visibility.Visible;
+
                 tbRelName.Text = rel.Name;
                 tbRelOwn.Text = rel.Owner;
-                tbRelCat.Text = rel.Category;
                 tbRelDescription.Text = rel.Description;
+
+                cbType.SelectedIndex = cbType.Items.IndexOf(cbType.FindName(rel.Type));
+
                 tbRelThing.Text = rel.ThingID;
                 tbRelSpace.Text = rel.SpaceID;
-                tbRelType.Text = rel.Type;
                 tbRelFirst.Text = rel.FSname;
                 tbRelSec.Text = rel.SSname;
+                tbRelFirstArgs.Text = rel.FSargs;
+                tbRelSecondArgs.Text = rel.SSargs;
 
             }
             else // Don't show
@@ -153,14 +170,15 @@ namespace AtlasIDE
 
                     rel.Name = tbRelName.Text;
                     rel.Owner = tbRelOwn.Text;
-                    rel.Category = tbRelCat.Text;
                     rel.Description = tbRelDescription.Text;
+                    rel.Type = cbType.SelectedItem.ToString();
                     rel.ThingID = tbRelThing.Text;
                     rel.SpaceID = tbRelSpace.Text;
-                    rel.Type = tbRelType.Text;
                     rel.FSname = tbRelFirst.Text;
                     rel.SSname = tbRelSec.Text;
 
+                    rel.FSargs = tbRelFirstArgs.Text;
+                    rel.SSargs = tbRelSecondArgs.Text;
                 }
 
                 UpdateRelationship();
@@ -173,6 +191,9 @@ namespace AtlasIDE
                     textBoxes[i].Clear();
                     textBoxes[i].Visibility = Visibility.Hidden;
                 }
+
+                lbRelType.Visibility = Visibility.Hidden;
+                cbType.Visibility = Visibility.Hidden;
 
             }
         }
@@ -275,6 +296,7 @@ namespace AtlasIDE
         private void btNew(object sender, RoutedEventArgs e) //Open recipe editor
         {
             appShow(true);
+            app = new App();
         }
 
         private void btPublish(object sender, RoutedEventArgs e) //Post recipe to list and close recipe editor
@@ -297,22 +319,22 @@ namespace AtlasIDE
 
             string appName = tbAppName.Text;
             lbApp.Items.Add(appName);
-            app.Name = appName; //app.Commands is already covered while dragging and dropping
+            app.Name = appName;
+            Console.WriteLine(app.Commands.Count);
 
             appList.Add(app);
             lbAppMan.Items.Add(appName);
-            if (app.Commands.Count > 0) { app.Commands.Clear(); }
+            //if (app.Commands.Count > 0) { app.Commands.Clear(); }
             lbRecipe.Items.Clear();
             lbIF.Items.Clear();
             lbTHEN.Items.Clear();
             tbAppName.Clear();
-            app.Name = null;
-            app.Commands.Clear();
+            //app.Name = null;
             MessageBox.Show("App Published!");
             appShow(false);
         }
 
-        void appShow(bool show) //Show/hide the recipe editor
+        void appShow(bool show) //Show/hide the recipe editor.
         {
             System.Windows.Controls.Label[] labels = { Recipe_Rel, Recipe_Serv, Recipe_Editor, Recipe_Name, IF, THEN, Arg};
             System.Windows.Controls.ListBox[] listBoxes = { lbRelationship_Copy, lbService, lbRecipe, lbIF, lbTHEN };
@@ -397,8 +419,9 @@ namespace AtlasIDE
             lbRecipe.Items.Add(recipeCom);
             app.Commands.Add(cond);
 
-            cond.IF = null;
-            cond.THEN = null;
+            //cond.IF = null;
+            //cond.THEN = null;
+            badlyNamedBoolean = true;
             lbIF.Items.Clear();
             lbTHEN.Items.Clear();
         }
@@ -408,12 +431,12 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             dragSource = parent;
             object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+            box = false; //tells the recipe listbox that they are receiving from a relationship
 
-            if(data != null)
+            if (data != null)
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
-            box = false; //tells the recipe listbox that they are receiving from a relationship
         }
 
         public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e) //Drag from services box in Recipes (identical to above, used in case of future variation)
@@ -421,12 +444,12 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             dragSource = parent;
             object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
 
             if (data != null)
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
-            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
         }
 
         public void Recipe_Drop(object sender, DragEventArgs e) //Drop into recipe box
@@ -456,6 +479,8 @@ namespace AtlasIDE
 
         public void IF_Drop(object sender, DragEventArgs e) //Drop into IF box on conditional
         {
+            if (badlyNamedBoolean)
+                cond = new Cond_Eval();
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             if (lbIF.Items.Count > 1) { lbIF.Items.Clear(); }
@@ -478,10 +503,13 @@ namespace AtlasIDE
                 }
                 lbIF.Items.Add(data);
             }
+            badlyNamedBoolean = false;
         }
 
         public void THEN_Drop(object sender, DragEventArgs e) //Drop into THEN box on conditional
         {
+            if (badlyNamedBoolean)
+                cond = new Cond_Eval();
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             if (lbTHEN.Items.Count > 1) { lbTHEN.Items.Clear(); }
@@ -504,6 +532,7 @@ namespace AtlasIDE
                 }
                 lbTHEN.Items.Add(data);
             }
+            badlyNamedBoolean = false;
         }
 
         public void btActivate(object sender, RoutedEventArgs e) //Activate App in Apps tab
@@ -514,63 +543,121 @@ namespace AtlasIDE
                 return;
             }
 
-            string selection = lbApp.SelectedItem.ToString();
-            int index = lbApp.Items.IndexOf(selection);
+            string selection = lbAppMan.SelectedItem.ToString();
+            int index = lbAppMan.Items.IndexOf(selection);
 
             DateTime now = DateTime.Now;
             string select_status = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
             lbStatus.Items.Add(select_status);
 
-            for (int i = 0; i < appList[index].Commands.Count; i++)
-            {
-                Evaluate(appList[index].Commands[i]);
-            }
+            Evaluate(appList[index]);
+
             lbStatus.Items.Remove(select_status);
             select_status = lbAppMan.SelectedItem.ToString() + "\t\tCompleted\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
             lbStatus.Items.Add(select_status);
 
         }
-
-        //TODO
-        public bool Evaluate(Command command) //Evaluate relationships, services, Cond_Eval. I am able to pull each service and relationship, but someone needs to connect those to the API.
-        {
-            if (command is ServiceInstruction)
-            {
-                //Find Service from service name, similar to findRelationship above
-                //implement relationship and return a value depending what you need for the cond_eval
-                return true;
-            }
-            else if (command is RelationshipInstruction)
-            {
-                Relationship match = findRelationship(command.func);
-                //TODO: implement relationship
-                return true;
-            }
-            else if(command is Cond_Eval)//cond_eval
-            {
-                bool retVal = Evaluate(command.IF);
-                if (retVal) { 
-                    Evaluate(command.THEN); return true;
-                }
-                return false;
-            }
-        }
         
 
         // Hassall Service/Thing Code
+
+        public void Evaluate(App app)
+        {
+
+            //Console.WriteLine(app.Commands.Count);
+            foreach (Command command in app.Commands)
+            {
+                ServiceResponseTweet res = new ServiceResponseTweet();
+                if (command.GetType() == typeof(Cond_Eval))
+                {
+
+                    Command cond1 = (command as Cond_Eval).IF;
+                    //Console.Write("conditional");
+
+                    if (cond1.GetType() == typeof(ServiceInstruction))
+                    {
+                        Service service = Networking.Services.Find(x => x.Name == cond1.func);
+                        if (service != null) { 
+                            res = Networking.Call(service, cond1.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                        }
+                    }
+                    else foreach (Thing thing in Networking.Things)
+                        {
+                            Relationship rel = thing.Relationships.Find(x => x.Name == cond1.func);
+                            if (rel != null)
+                            {
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
+                        }
+
+                    if (res.ServiceResult == null || res.ServiceResult == "0")
+                        return;
+
+                    Command cond2 = (command as Cond_Eval).THEN;
+                    //Console.Write("conditional");
+
+                    if (cond2.GetType() == typeof(ServiceInstruction))
+                    {
+                        Service service = Networking.Services.Find(x => x.Name == cond2.func);
+                        if (service != null)
+                        {
+                            res = Networking.Call(service, cond2.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                        }
+                    }
+                    else foreach (Thing thing in Networking.Things)
+                        {
+                            Relationship rel = thing.Relationships.Find(x => x.Name == cond2.func);
+                            if (rel != null)
+                            { 
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
+                        }
+                }
+
+                else
+                {
+                    if (command.GetType() == typeof(ServiceInstruction)) { 
+                        Service service = Networking.Services.Find(x => x.Name == command.func);
+                        if (service != null)
+                        {
+                            res = Networking.Call(service, command.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+
+                        }
+                    }
+                    else foreach (Thing thing in Networking.Things) {
+                        Relationship rel = thing.Relationships.Find(x => x.Name == (command.func as string));
+                            if (rel != null)
+                            {
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
+                    }
+
+                }
+            }
+            OutputResults.Items.Refresh();
+        }
         public void UpdateThings()
         {
             thingList.ItemsSource = null;
             thingList.ItemsSource = Networking.Things;
+            thingList.Items.Refresh();
             //thingList.UpdateLayout();
         }
         public void UpdateServices()
         {
             List<string> thingIDs = new List<string>();
-            foreach (Service service in Networking.ServicesCollection)
+            foreach (Service service in Networking.Services)
                 if (!thingIDs.Contains(service.ThingID))
                     thingIDs.Add(service.ThingID);
+            thingFilterList.ItemsSource = null;
             thingFilterList.ItemsSource = thingIDs;
+            thingFilterList.Items.Refresh();
 
             List<string> services = new List<string>();
             foreach (Service service in Networking.ServicesCollection)
@@ -590,11 +677,19 @@ namespace AtlasIDE
         
         public void UpdateRelationship()
         {
+            List<string> thingIDs = new List<string>();
+            foreach (Thing thing in Networking.Things)
+                foreach (Relationship relationship in thing.Relationships)
+                    if (!thingIDs.Contains(relationship.ThingID))
+                        thingIDs.Add(relationship.ThingID);
+            thingFilterList.ItemsSource = thingIDs;
+
             List<string> relationships = new List<string>();
             foreach (Thing thing in Networking.Things)
                 foreach (Relationship relationship in thing.Relationships)
                     relationships.Add(relationship.Name);
 
+            view = CollectionViewSource.GetDefaultView(Networking.RelationshipCollection);
 
             lbRelationship.ItemsSource = null;
             lbRelationship_Copy.ItemsSource = null;
@@ -617,7 +712,6 @@ namespace AtlasIDE
         {
             Filter();
         }
-
 
     }
 }

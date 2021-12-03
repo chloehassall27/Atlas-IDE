@@ -17,14 +17,16 @@ namespace AtlasIDE
         public static List<Thing> Things { get; } = new List<Thing>();
         public static List<Service> Services { get; } = new List<Service>();
         public static ObservableCollection<Service> ServicesCollection { get; } = new ObservableCollection<Service>();
+        public static ObservableCollection<Relationship> RelationshipCollection { get; } = new ObservableCollection<Relationship>();
         public static MainWindow Window;
+
         public static void Start()
         {
             udpClient = new UdpClient(1235);
             udpClient.JoinMulticastGroup(IPAddress.Parse("232.1.1.1"), 16);
 
             var receiveThread = new Thread(Receive);
-            receiveThread.Start();
+            receiveThread.Start();            
         }
 
         public static void Receive()
@@ -108,8 +110,6 @@ namespace AtlasIDE
                         }
                         break;
 
-                    // What about unbounded services?
-
                     default:
                         break;
                 }
@@ -118,8 +118,9 @@ namespace AtlasIDE
 
 
         private static readonly string HOST = "192.168.0.199";
+        private static readonly string HOST2 = "192.168.0.176";
         private static readonly int PORT = 6668;
-        public static ServiceResponseTweet Call(Service service, int? input = null)
+        public static ServiceResponseTweet Call(Service service, string input)
         {
             ServiceCallTweet call = new ServiceCallTweet();
             call.TweetType = "Service call";
@@ -131,7 +132,11 @@ namespace AtlasIDE
 
             Thing thing = Things.Find(x => x.ID == service.ThingID);
 
-            TcpClient client = new TcpClient(HOST, PORT);
+            TcpClient client;
+            if(service.ThingID == "Kyles_RPi4")
+                client = new TcpClient(HOST, PORT);
+            else
+                client = new TcpClient(HOST2, PORT);
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(call, Formatting.Indented));
             NetworkStream stream = client.GetStream();
             stream.Write(data, 0, data.Length);
@@ -144,6 +149,10 @@ namespace AtlasIDE
             Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
             stream.Close();
             client.Close();
+
+
+            //Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
+            //Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
             return response;
         }
 
@@ -180,16 +189,17 @@ namespace AtlasIDE
             Service second = findService(relationship.SSname);
             String type = relationship.Type;
 
-            if(first == null || second == null)
+            if (first == null || second == null)
             {
                 return null;
             }
 
+            ServiceResponseTweet firstResponseTweet = new ServiceResponseTweet();
             ServiceResponseTweet serviceResponseTweet = new ServiceResponseTweet();
 
-            if (type.Equals("Control"))
+            if (type.Equals("System.Windows.Controls.ComboBoxItem: control"))
             {
-                ServiceResponseTweet firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
                 String serviceResponse = firstResponseTweet.ServiceResult;
 
@@ -204,42 +214,34 @@ namespace AtlasIDE
 
                 if (Convert.ToBoolean(boolRes))
                 {
-                    serviceResponseTweet = Call(second);
+                    serviceResponseTweet = Call(second, relationship.SSargs);
                 }
                 else
                 {
                     serviceResponseTweet.ServiceName = second.Name;
                     serviceResponseTweet.ServiceResult = "First Service evaluated to 0, " + second.Name + " did not run!";
                 }
-               
+
 
             }
-            else if (type.Equals("Drive"))
+            else if (type.Equals("System.Windows.Controls.ComboBoxItem: drive"))
             {
-                ServiceResponseTweet firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
-                String serviceResponse = firstResponseTweet.ServiceResult;
-
-                bool anIntegerNumber = int.TryParse(serviceResponse, out int convertedValue);
-
-                if (!anIntegerNumber)
-                {
-                    return null;
-                }
-
-               serviceResponseTweet = Call(second, convertedValue);
+                serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult);
 
             }
             //else if (type.Equals("Support")) // Before Service 1, Check on Service 2
             //{
 
             //}
-            else if (type.Equals("Extend")) // Do Service 1 While Doing Service 2
+            else if (type.Equals("System.Windows.Controls.ComboBoxItem: extend")) // Do Service 1 While Doing Service 2
             {
-                ServiceResponseTweet serviceResponseTweet2 = new ServiceResponseTweet();
+                //firstResponseTweet = new ServiceResponseTweet();
+                //serviceResponseTweet = new ServiceResponseTweet();
 
-                var doThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
-                var whileDoingThread = new Thread(() => VoidCall(first, ref serviceResponseTweet2));
+                var doThread = new Thread(() => firstResponseTweet = Call(first, relationship.FSargs));
+                var whileDoingThread = new Thread(() => serviceResponseTweet = Call(second, relationship.SSargs));
                 doThread.Start();
                 whileDoingThread.Start();
 
@@ -257,6 +259,10 @@ namespace AtlasIDE
                 serviceResponseTweet = null;
             }
 
+            if (serviceResponseTweet != null) { 
+                Console.WriteLine(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
+                //Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
+            }
             return serviceResponseTweet;
 
         }
