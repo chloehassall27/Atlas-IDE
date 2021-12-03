@@ -15,7 +15,7 @@ namespace AtlasIDE
     { 
         public ICollectionView view;
         Relationship rel;
-        Service serv;
+        //Service serv;
         App app = new App();
         bool box = true;
         bool badlyNamedBoolean = false;
@@ -290,6 +290,7 @@ namespace AtlasIDE
             int index = lbApp.Items.IndexOf(select_rel);
             lbApp.Items.RemoveAt(index);
             lbAppMan.Items.RemoveAt(index);
+            appList.RemoveAt(index);
         }
 
         private void btNew(object sender, RoutedEventArgs e) //Open recipe editor
@@ -333,7 +334,7 @@ namespace AtlasIDE
             appShow(false);
         }
 
-        void appShow(bool show) //Show/hide the recipe editor
+        void appShow(bool show) //Show/hide the recipe editor.
         {
             System.Windows.Controls.Label[] labels = { Recipe_Rel, Recipe_Serv, Recipe_Editor, Recipe_Name, IF, THEN, Arg};
             System.Windows.Controls.ListBox[] listBoxes = { lbRelationship_Copy, lbService, lbRecipe, lbIF, lbTHEN };
@@ -542,15 +543,21 @@ namespace AtlasIDE
                 return;
             }
 
-            string selection = lbAppMan.SelectedItem.ToString();
+            string selection = lbApp.SelectedItem.ToString();
             int index = lbApp.Items.IndexOf(selection);
-            Console.WriteLine(appList[index].Commands.Count);
-            Evaluate(appList[index]);
-            //TODO: define way to evaluate relationship/service
 
             DateTime now = DateTime.Now;
             string select_status = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
             lbStatus.Items.Add(select_status);
+
+            for (int i = 0; i < appList[index].Commands.Count; i++)
+            {
+                Evaluate(appList[index].Commands[i]);
+            }
+            lbStatus.Items.Remove(select_status);
+            select_status = lbAppMan.SelectedItem.ToString() + "\t\tCompleted\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
+            lbStatus.Items.Add(select_status);
+
         }
         
 
