@@ -546,7 +546,7 @@ namespace AtlasIDE
                 //TODO: implement relationship
                 return true;
             }
-            else //cond_eval
+            else if(command is Cond_Eval)//cond_eval
             {
                 bool retVal = Evaluate(command.IF);
                 if (retVal) { 
