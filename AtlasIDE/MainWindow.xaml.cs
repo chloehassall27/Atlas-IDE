@@ -16,6 +16,7 @@ namespace AtlasIDE
         Relationship rel;
         Service serv;
         App app = new App();
+        bool box = false;
         List<App> appList = new List<App>();
         Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
@@ -69,20 +70,16 @@ namespace AtlasIDE
             testApp.Name = "Test App";
             lbApp.Items.Add(testApp.Name);
             lbAppMan.Items.Add(testApp.Name);
-            */
 
-
-            lbDrop.AllowDrop = true;
-            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
-            serviceList.ItemsSource = view;
-
-            /*
-            lbRelationship.Items.Add(rel.Name);
-            lbRelationship.Items.Add(rel2.Name);
             lbRelationship_Copy.Items.Add(rel.Name);
             lbRelationship_Copy.Items.Add(rel2.Name);
             lbService.Items.Add(serv.Name);
             */
+
+            lbDrop.AllowDrop = true;
+            view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
+            serviceList.ItemsSource = view;
+            
             appShow(false);
             ShowRelEdit(false);
         }
@@ -315,9 +312,9 @@ namespace AtlasIDE
 
         void appShow(bool show) //Show/hide the recipe editor
         {
-            System.Windows.Controls.Label[] labels = { Recipe_Rel, Recipe_Serv, Recipe_Editor, Recipe_Name, IF, THEN};
+            System.Windows.Controls.Label[] labels = { Recipe_Rel, Recipe_Serv, Recipe_Editor, Recipe_Name, IF, THEN, Arg};
             System.Windows.Controls.ListBox[] listBoxes = { lbRelationship_Copy, lbService, lbRecipe, lbIF, lbTHEN };
-            System.Windows.Controls.TextBox[] textBoxes = {tbAppName};
+            System.Windows.Controls.TextBox[] textBoxes = {tbAppName, tbArg};
             System.Windows.Controls.Button[] buttons = { bt_Publish, bt_AddCond };
 
             if (show) // Show Recipe edit form
@@ -375,10 +372,27 @@ namespace AtlasIDE
                 return;
             }
 
-            cond.IF = lbIF.Items.GetItemAt(0); //Need to get actual relationship/service
-            cond.THEN = lbTHEN.Items.GetItemAt(0);
+            string recipeCom = "IF ";
+            if (cond.IF is ServiceInstruction)
+            {
+                recipeCom += cond.IF.func + "(" + cond.IF.arg + ")";
+            }
+            else
+            {
+                recipeCom += cond.IF.func;
+            }
 
-            lbRecipe.Items.Add(("IF " + lbIF.Items.GetItemAt(0) + " THEN " + lbTHEN.Items.GetItemAt(0)));
+            recipeCom += " THEN ";
+
+            if(cond.THEN is ServiceInstruction)
+            {
+                recipeCom += cond.THEN.func + "(" + cond.THEN.arg + ")";
+            }
+            else
+            {
+                recipeCom += cond.THEN.func;
+            }
+            lbRecipe.Items.Add(recipeCom);
             app.Commands.Add(cond);
 
             cond.IF = null;
@@ -397,6 +411,7 @@ namespace AtlasIDE
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
+            box = false; //tells the recipe listbox that they are receiving from a relationship
         }
 
         public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e) //Drag from services box in Recipes (identical to above, used in case of future variation)
@@ -409,13 +424,32 @@ namespace AtlasIDE
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
+            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
         }
 
         public void Recipe_Drop(object sender, DragEventArgs e) //Drop into recipe box
         {
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
-            lbRecipe.Items.Add(data);
+            if (box == false) // relationship
+            {
+                lbRecipe.Items.Add(data);
+                app.Commands.Add(new RelationshipInstruction(data.ToString()));
+            }
+            else //service
+            {
+                if (tbArg.Text == null || tbArg.Text == "")
+                {
+                    app.Commands.Add(new ServiceInstruction(data.ToString(), ""));
+                    data += "()";
+                }
+                else
+                {
+                    app.Commands.Add(new ServiceInstruction(data.ToString(), tbArg.Text.ToString()));
+                    data += "(" + tbArg.Text.ToString() + ")";
+                }
+                lbRecipe.Items.Add(data);
+            }
         }
 
         public void IF_Drop(object sender, DragEventArgs e) //Drop into IF box on conditional
@@ -423,8 +457,25 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             if (lbIF.Items.Count > 1) { lbIF.Items.Clear(); }
-            lbIF.Items.Add(data);
-            cond.IF = data;
+            if (box == false) // relationship
+            {
+                lbIF.Items.Add(data);
+                cond.IF = new RelationshipInstruction(data.ToString());
+            }
+            else //service
+            {
+                if (tbArg.Text == null || tbArg.Text == "")
+                {
+                    cond.IF = new ServiceInstruction(data.ToString(), "");
+                    data += "()";
+                }
+                else
+                {
+                    cond.IF = new ServiceInstruction(data.ToString(), tbArg.Text.ToString());
+                    data += "(" + tbArg.Text.ToString() + ")";
+                }
+                lbIF.Items.Add(data);
+            }
         }
 
         public void THEN_Drop(object sender, DragEventArgs e) //Drop into THEN box on conditional
@@ -432,8 +483,25 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             if (lbTHEN.Items.Count > 1) { lbTHEN.Items.Clear(); }
-            lbTHEN.Items.Add(data);
-            cond.THEN = data;
+            if (box == false) // relationship
+            {
+                lbTHEN.Items.Add(data);
+                cond.THEN = new RelationshipInstruction(data.ToString());
+            }
+            else //service
+            {
+                if (tbArg.Text == null || tbArg.Text == "")
+                {
+                    cond.THEN = new ServiceInstruction(data.ToString(), "");
+                    data += "()";
+                }
+                else
+                {
+                    cond.THEN = new ServiceInstruction(data.ToString(), tbArg.Text.ToString());
+                    data += "(" + tbArg.Text.ToString() + ")";
+                }
+                lbTHEN.Items.Add(data);
+            }
         }
 
         public void btActivate(object sender, RoutedEventArgs e) //Activate App in Apps tab
