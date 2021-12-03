@@ -6,14 +6,39 @@ namespace AtlasIDE
     public class App
     {
         public string Name { get; set; }
-        public List<object> Commands = new List<object>(); //The app's list of commands, which can be executed in order.
-        public List<int> Inputs = new List<int>(); //The app's list of commands, which can be executed in order.
-        //The only two objects allowed in an app's commands list are Relationships and Services.
+        public List<Command> Commands = new List<Command>(); //The app's list of commands, which can be executed in order.
+        //The only two objects allowed in an app's commands list are Commands and Cond_Evals.
     }
-    public class Cond_Eval
+
+    public class Command
     {
-        public object IF { get; set; }
-        public object THEN { get; set; }
+        public string func { get; set; }
+        public string arg { get; set; }
+        
+    }
+
+    public class RelationshipInstruction : Command
+    {
+        public RelationshipInstruction(string func)
+        {
+            this.func = func;
+            this.arg = "";
+        }
+    }
+
+    public class ServiceInstruction : Command
+    {
+        public ServiceInstruction(string func, string arg)
+        {
+            this.func = func;
+            this.arg = arg;
+        }
+    }
+
+    public class Cond_Eval : Command
+    {
+        public Command IF { get; set; }
+        public Command THEN { get; set; }
         //The only IF and THEN objects allowed are Relationships and Services
     }
 
