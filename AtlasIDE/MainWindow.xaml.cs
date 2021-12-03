@@ -697,21 +697,5 @@ namespace AtlasIDE
             Filter();
         }
 
-
-        public void FilterRel()
-        {
-            if (lbRelThingFIlter.SelectedItems.Count > 0)
-                view.Filter = (o) =>
-                {
-                    return lbRelThingFIlter.SelectedItems.Contains(((Relationship)o).ThingID);
-                };
-            else
-                view.Filter = null;
-        }
-
-        private void FilterRelChangeSelection(object sender, SelectionChangedEventArgs e)
-        {
-            Filter();
-        }
     }
 }
