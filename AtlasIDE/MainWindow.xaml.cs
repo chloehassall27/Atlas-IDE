@@ -136,7 +136,9 @@ namespace AtlasIDE
                 tbRelName.Text = rel.Name;
                 tbRelOwn.Text = rel.Owner;
                 tbRelDescription.Text = rel.Description;
-                cbType.SelectedValue = rel.Type;
+
+                cbType.SelectedIndex = cbType.Items.IndexOf(cbType.FindName(rel.Type));
+
                 tbRelThing.Text = rel.ThingID;
                 tbRelSpace.Text = rel.SpaceID;
                 tbRelFirst.Text = rel.FSname;
@@ -629,11 +631,19 @@ namespace AtlasIDE
         
         public void UpdateRelationship()
         {
+            List<string> thingIDs = new List<string>();
+            foreach (Thing thing in Networking.Things)
+                foreach (Relationship relationship in thing.Relationships)
+                    if (!thingIDs.Contains(relationship.ThingID))
+                        thingIDs.Add(relationship.ThingID);
+            thingFilterList.ItemsSource = thingIDs;
+
             List<string> relationships = new List<string>();
             foreach (Thing thing in Networking.Things)
                 foreach (Relationship relationship in thing.Relationships)
                     relationships.Add(relationship.Name);
 
+            view = CollectionViewSource.GetDefaultView(Networking.RelationshipCollection);
 
             lbRelationship.ItemsSource = null;
             lbRelationship_Copy.ItemsSource = null;
@@ -653,6 +663,23 @@ namespace AtlasIDE
         }
 
         private void FilterChangeSelection(object sender, SelectionChangedEventArgs e)
+        {
+            Filter();
+        }
+
+
+        public void FilterRel()
+        {
+            if (lbRelThingFIlter.SelectedItems.Count > 0)
+                view.Filter = (o) =>
+                {
+                    return lbRelThingFIlter.SelectedItems.Contains(((Relationship)o).ThingID);
+                };
+            else
+                view.Filter = null;
+        }
+
+        private void FilterRelChangeSelection(object sender, SelectionChangedEventArgs e)
         {
             Filter();
         }

@@ -17,6 +17,7 @@ namespace AtlasIDE
         public static List<Thing> Things { get; } = new List<Thing>();
         public static List<Service> Services { get; } = new List<Service>();
         public static ObservableCollection<Service> ServicesCollection { get; } = new ObservableCollection<Service>();
+        public static ObservableCollection<Relationship> RelationshipCollection { get; } = new ObservableCollection<Relationship>();
         public static MainWindow Window;
 
         public static ObservableCollection<string> Outputs = new ObservableCollection<string>();
@@ -192,7 +193,7 @@ namespace AtlasIDE
             ServiceResponseTweet firstResponseTweet = new ServiceResponseTweet();
             ServiceResponseTweet serviceResponseTweet = new ServiceResponseTweet();
 
-            if (type.Equals("Control"))
+            if (type.Equals("control"))
             {
                 firstResponseTweet = Call(first); // First call to obtain input for second call
 
@@ -219,7 +220,7 @@ namespace AtlasIDE
 
 
             }
-            else if (type.Equals("Drive"))
+            else if (type.Equals("drive"))
             {
                 firstResponseTweet = Call(first); // First call to obtain input for second call
 
@@ -239,7 +240,7 @@ namespace AtlasIDE
             //{
 
             //}
-            else if (type.Equals("Extend")) // Do Service 1 While Doing Service 2
+            else if (type.Equals("extend")) // Do Service 1 While Doing Service 2
             {
                 serviceResponseTweet = new ServiceResponseTweet();
 
