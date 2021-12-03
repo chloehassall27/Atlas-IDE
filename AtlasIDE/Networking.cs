@@ -119,7 +119,7 @@ namespace AtlasIDE
 
         private static readonly string HOST = "192.168.0.199";
         private static readonly int PORT = 6668;
-        public static ServiceResponseTweet Call(Service service, int? input = null)
+        public static ServiceResponseTweet Call(Service service, string input)
         {
             ServiceCallTweet call = new ServiceCallTweet();
             call.TweetType = "Service call";
@@ -209,7 +209,7 @@ namespace AtlasIDE
 
                 if (Convert.ToBoolean(boolRes))
                 {
-                    serviceResponseTweet = Call(second);
+                    serviceResponseTweet = Call(second, );
                 }
                 else
                 {
@@ -223,16 +223,7 @@ namespace AtlasIDE
             {
                 firstResponseTweet = Call(first); // First call to obtain input for second call
 
-                String serviceResponse = firstResponseTweet.ServiceResult;
-
-                bool anIntegerNumber = int.TryParse(serviceResponse, out int convertedValue);
-
-                if (!anIntegerNumber)
-                {
-                    return null;
-                }
-
-                serviceResponseTweet = Call(second, convertedValue);
+                serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult);
 
             }
             //else if (type.Equals("Support")) // Before Service 1, Check on Service 2

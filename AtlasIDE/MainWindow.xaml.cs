@@ -546,52 +546,59 @@ namespace AtlasIDE
         {
 
             Console.WriteLine(app.Commands.Count);
-            foreach (object evaluatable in app.Commands)
+            foreach (Command command in app.Commands)
             {
-                if (evaluatable.GetType() == typeof(Cond_Eval))
+                if (command.GetType() == typeof(Cond_Eval))
                 {
 
-                    object cond1 = (evaluatable as Cond_Eval).IF;
+                    Command cond1 = (command as Cond_Eval).IF;
                     //Console.Write("conditional");
                     ServiceResponseTweet res = new ServiceResponseTweet();
-                    Service service = Networking.Services.Find(x => x.Name == (cond1 as string));
-                    if (service != null)
-                        res = Networking.Call(service);
 
-                    foreach (Thing thing in Networking.Things)
+                    if (command.GetType() == typeof(ServiceInstruction))
                     {
-                        Relationship rel = thing.Relationships.Find(x => x.Name == (cond1 as string));
-                        if (rel != null)
-                            res = Networking.EvalauteRelationship(rel);
+                        Service service = Networking.Services.Find(x => x.Name == cond1.func);
+                        if (service != null)
+                            Networking.Call(service, cond1.arg);
                     }
+                    else foreach (Thing thing in Networking.Things)
+                        {
+                            Relationship rel = thing.Relationships.Find(x => x.Name == cond1.func);
+                            if (rel != null)
+                                Networking.EvalauteRelationship(rel, cond1.arg);
+                        }
 
                     if (res.ServiceResult == null || res.ServiceResult == "0")
                         return;
 
-                    object cond2 = (evaluatable as Cond_Eval).THEN;
+                    Command cond2 = (command as Cond_Eval).THEN;
                     //Console.Write("conditional");
-                    service = Networking.Services.Find(x => x.Name == (cond2 as string));
-                    if (service != null)
-                        Networking.Call(service);
 
-                    foreach (Thing thing in Networking.Things)
+                    if (command.GetType() == typeof(ServiceInstruction))
                     {
-                        Relationship rel = thing.Relationships.Find(x => x.Name == (cond2 as string));
-                        if (rel != null)
-                            Networking.EvalauteRelationship(rel);
+                        Service service = Networking.Services.Find(x => x.Name == cond2.func);
+                        if (service != null)
+                            Networking.Call(service, cond2.arg);
                     }
+                    else foreach (Thing thing in Networking.Things)
+                        {
+                            Relationship rel = thing.Relationships.Find(x => x.Name == cond2.func);
+                            if (rel != null)
+                                Networking.EvalauteRelationship(rel, cond2.arg);
+                        }
                 }
 
                 else
                 {
-                    Service service = Networking.Services.Find(x => x.Name == (evaluatable as string));
-                    if (service != null)
-                        Networking.Call(service);
-
-                    foreach (Thing thing in Networking.Things) {
-                        Relationship rel = thing.Relationships.Find(x => x.Name == (evaluatable as string));
+                    if (command.GetType() == typeof(ServiceInstruction)) { 
+                        Service service = Networking.Services.Find(x => x.Name == command.func);
+                        if (service != null)
+                            Networking.Call(service, command.arg);
+                    }
+                    else foreach (Thing thing in Networking.Things) {
+                        Relationship rel = thing.Relationships.Find(x => x.Name == (command.func as string));
                         if (rel != null)
-                            Networking.EvalauteRelationship(rel);
+                            Networking.EvalauteRelationship(rel, command.arg);
                     }
 
                 }
