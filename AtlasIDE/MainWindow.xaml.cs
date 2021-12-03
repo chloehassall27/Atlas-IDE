@@ -17,7 +17,7 @@ namespace AtlasIDE
         Relationship rel;
         Service serv;
         App app = new App();
-        bool box = false;
+        bool box = true;
         List<App> appList = new List<App>();
         Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
@@ -78,7 +78,7 @@ namespace AtlasIDE
             //lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
-            OutputResults.ItemsSource = Networking.Outputs;
+            OutputResults.ItemsSource = Outputs;
 
             /*
             lbRelationship_Copy.Items.Add(rel.Name);
@@ -292,6 +292,7 @@ namespace AtlasIDE
         private void btNew(object sender, RoutedEventArgs e) //Open recipe editor
         {
             appShow(true);
+            app = new App();
         }
 
         private void btPublish(object sender, RoutedEventArgs e) //Post recipe to list and close recipe editor
@@ -425,12 +426,12 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             dragSource = parent;
             object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+            box = false; //tells the recipe listbox that they are receiving from a relationship
 
-            if(data != null)
+            if (data != null)
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
-            box = false; //tells the recipe listbox that they are receiving from a relationship
         }
 
         public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e) //Drag from services box in Recipes (identical to above, used in case of future variation)
@@ -438,12 +439,12 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             dragSource = parent;
             object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
 
             if (data != null)
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
-            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
         }
 
         public void Recipe_Drop(object sender, DragEventArgs e) //Drop into recipe box
@@ -624,6 +625,7 @@ namespace AtlasIDE
 
                 }
             }
+            OutputResults.Items.Refresh();
         }
         public void UpdateThings()
         {

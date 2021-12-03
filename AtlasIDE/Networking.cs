@@ -19,7 +19,6 @@ namespace AtlasIDE
         public static ObservableCollection<Service> ServicesCollection { get; } = new ObservableCollection<Service>();
         public static MainWindow Window;
 
-        public static ObservableCollection<string> Outputs = new ObservableCollection<string>();
         public static void Start()
         {
             udpClient = new UdpClient(1235);
@@ -118,6 +117,7 @@ namespace AtlasIDE
 
 
         private static readonly string HOST = "192.168.0.199";
+        private static readonly string HOST2 = "192.168.0.157";
         private static readonly int PORT = 6668;
         public static ServiceResponseTweet Call(Service service, string input)
         {
@@ -131,7 +131,11 @@ namespace AtlasIDE
 
             Thing thing = Things.Find(x => x.ID == service.ThingID);
 
-            TcpClient client = new TcpClient(HOST, PORT);
+            TcpClient client;
+            if(service.ThingID == "Kyles_RPi4")
+                client = new TcpClient(HOST, PORT);
+            else
+                client = new TcpClient(HOST2, PORT);
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(call, Formatting.Indented));
             NetworkStream stream = client.GetStream();
             stream.Write(data, 0, data.Length);
@@ -147,7 +151,7 @@ namespace AtlasIDE
 
 
             Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
-            Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
+            //Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
             return response;
         }
 
@@ -256,7 +260,7 @@ namespace AtlasIDE
 
             if (serviceResponseTweet != null) { 
                 Console.WriteLine(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
-                Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
+                //Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
             }
             return serviceResponseTweet;
 
