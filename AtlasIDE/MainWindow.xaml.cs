@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,7 @@ namespace AtlasIDE
         Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
+        ObservableCollection<AppOutput> Outputs = new ObservableCollection<AppOutput>();
 
         public MainWindow()
         {
@@ -84,6 +86,7 @@ namespace AtlasIDE
             lbService.Items.Add(serv.Name);
             */
 
+            //lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
             
@@ -548,24 +551,29 @@ namespace AtlasIDE
             Console.WriteLine(app.Commands.Count);
             foreach (Command command in app.Commands)
             {
+                ServiceResponseTweet res = new ServiceResponseTweet();
                 if (command.GetType() == typeof(Cond_Eval))
                 {
 
                     Command cond1 = (command as Cond_Eval).IF;
                     //Console.Write("conditional");
-                    ServiceResponseTweet res = new ServiceResponseTweet();
 
                     if (command.GetType() == typeof(ServiceInstruction))
                     {
                         Service service = Networking.Services.Find(x => x.Name == cond1.func);
-                        if (service != null)
-                            Networking.Call(service, cond1.arg);
+                        if (service != null) { 
+                            res = Networking.Call(service, cond1.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                        }
                     }
                     else foreach (Thing thing in Networking.Things)
                         {
                             Relationship rel = thing.Relationships.Find(x => x.Name == cond1.func);
                             if (rel != null)
-                                Networking.EvalauteRelationship(rel, cond1.arg);
+                            {
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
                         }
 
                     if (res.ServiceResult == null || res.ServiceResult == "0")
@@ -578,13 +586,19 @@ namespace AtlasIDE
                     {
                         Service service = Networking.Services.Find(x => x.Name == cond2.func);
                         if (service != null)
-                            Networking.Call(service, cond2.arg);
+                        {
+                            res = Networking.Call(service, cond2.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                        }
                     }
                     else foreach (Thing thing in Networking.Things)
                         {
                             Relationship rel = thing.Relationships.Find(x => x.Name == cond2.func);
                             if (rel != null)
-                                Networking.EvalauteRelationship(rel, cond2.arg);
+                            { 
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
                         }
                 }
 
@@ -593,12 +607,19 @@ namespace AtlasIDE
                     if (command.GetType() == typeof(ServiceInstruction)) { 
                         Service service = Networking.Services.Find(x => x.Name == command.func);
                         if (service != null)
-                            Networking.Call(service, command.arg);
+                        {
+                            res = Networking.Call(service, command.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+
+                        }
                     }
                     else foreach (Thing thing in Networking.Things) {
                         Relationship rel = thing.Relationships.Find(x => x.Name == (command.func as string));
-                        if (rel != null)
-                            Networking.EvalauteRelationship(rel, command.arg);
+                            if (rel != null)
+                            {
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
                     }
 
                 }

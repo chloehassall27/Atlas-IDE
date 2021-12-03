@@ -194,7 +194,7 @@ namespace AtlasIDE
 
             if (type.Equals("Control"))
             {
-                firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
                 String serviceResponse = firstResponseTweet.ServiceResult;
 
@@ -209,7 +209,7 @@ namespace AtlasIDE
 
                 if (Convert.ToBoolean(boolRes))
                 {
-                    serviceResponseTweet = Call(second, );
+                    serviceResponseTweet = Call(second, relationship.SSargs);
                 }
                 else
                 {
@@ -221,7 +221,7 @@ namespace AtlasIDE
             }
             else if (type.Equals("Drive"))
             {
-                firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
                 serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult);
 
@@ -232,10 +232,11 @@ namespace AtlasIDE
             //}
             else if (type.Equals("Extend")) // Do Service 1 While Doing Service 2
             {
-                serviceResponseTweet = new ServiceResponseTweet();
+                //firstResponseTweet = new ServiceResponseTweet();
+                //serviceResponseTweet = new ServiceResponseTweet();
 
-                var doThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
-                var whileDoingThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
+                var doThread = new Thread(() => firstResponseTweet = Call(first, relationship.FSargs));
+                var whileDoingThread = new Thread(() => serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult));
                 doThread.Start();
                 whileDoingThread.Start();
 

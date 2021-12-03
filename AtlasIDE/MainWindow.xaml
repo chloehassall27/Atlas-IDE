@@ -211,11 +211,13 @@
                         <ListBox x:Name="lbAppMan" Height="173" Margin="10,63,658,156" Grid.ColumnSpan="3"/>
                         <Button x:Name="btStart" Content="Start" Click="btActivate" Margin="41,241,698,128" Grid.ColumnSpan="3"/>
                         <Label x:Name="Status" Content="Status" HorizontalContentAlignment="Center" Margin="149.4,32,227,329" Grid.Column="2"/>
-                        <ListBox x:Name="lbStatus" Height="173" Margin="149.4,63,227,156" Grid.Column="2"/>
-                        <ListView x:Name="OutputResults" Grid.Column="2" HorizontalAlignment="Left" Height="311" Margin="512,63,0,0" VerticalAlignment="Top" Width="168">
+                        <ListBox x:Name="lbStatus" Margin="149,63,227,213" Grid.Column="2"/>
+                        <ListView x:Name="OutputResults" Grid.Column="2" HorizontalAlignment="Left" Height="175" Margin="55,194,0,0" VerticalAlignment="Top" Width="621">
                             <ListView.View>
                                 <GridView>
-                                    <GridViewColumn/>
+                                    <GridViewColumn Header="App Name" DisplayMemberBinding="{Binding AppName}"/>
+                                    <GridViewColumn Header="Service Name" DisplayMemberBinding="{Binding ServiceName}"/>
+                                    <GridViewColumn Header="Result" DisplayMemberBinding="{Binding Result}"/>
                                 </GridView>
                             </ListView.View>
                         </ListView>
