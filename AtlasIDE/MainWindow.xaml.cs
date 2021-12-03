@@ -543,17 +543,15 @@ namespace AtlasIDE
                 return;
             }
 
-            string selection = lbApp.SelectedItem.ToString();
-            int index = lbApp.Items.IndexOf(selection);
+            string selection = lbAppMan.SelectedItem.ToString();
+            int index = lbAppMan.Items.IndexOf(selection);
 
             DateTime now = DateTime.Now;
             string select_status = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
             lbStatus.Items.Add(select_status);
 
-            for (int i = 0; i < appList[index].Commands.Count; i++)
-            {
-                Evaluate(appList[index].Commands[i]);
-            }
+            Evaluate(appList[index]);
+
             lbStatus.Items.Remove(select_status);
             select_status = lbAppMan.SelectedItem.ToString() + "\t\tCompleted\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
             lbStatus.Items.Add(select_status);
