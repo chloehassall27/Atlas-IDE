@@ -84,7 +84,6 @@ namespace AtlasIDE
             lbService.Items.Add(serv.Name);
             */
 
-            lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
             
@@ -109,8 +108,8 @@ namespace AtlasIDE
 
         void ShowRelEdit(bool show) // Controller that hides or shows edit form
         {
-            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelCat, lbRelDes, lbRelThing, lbRelSpace, lbRelType, lbRelFirstService, lbRelSecondService };
-            System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelCat, tbRelDescription, tbRelThing, tbRelSpace, tbRelType, tbRelFirst, tbRelSec };
+            System.Windows.Controls.Label[] labels = { lbRelName, lbRelOwn, lbRelDes, lbRelThing, lbRelSpace, lbRelFirstService, lbRelSecondService, lbRelFSArgs, lbRelSSArgs };
+            System.Windows.Controls.TextBox[] textBoxes = { tbRelName, tbRelOwn, tbRelDescription, tbRelThing, tbRelSpace, tbRelFirst, tbRelSec, tbRelFirstArgs, tbRelSecondArgs };
             string relSelectName = "";
 
             if (show) // Show Relationship edit form
@@ -131,15 +130,19 @@ namespace AtlasIDE
                     textBoxes[i].Visibility = Visibility.Visible;
                 }
 
+                lbRelType.Visibility = Visibility.Visible;
+                cbType.Visibility = Visibility.Visible;
+
                 tbRelName.Text = rel.Name;
                 tbRelOwn.Text = rel.Owner;
-                tbRelCat.Text = rel.Category;
                 tbRelDescription.Text = rel.Description;
+                cbType.SelectedValue = rel.Type;
                 tbRelThing.Text = rel.ThingID;
                 tbRelSpace.Text = rel.SpaceID;
-                tbRelType.Text = rel.Type;
                 tbRelFirst.Text = rel.FSname;
                 tbRelSec.Text = rel.SSname;
+                tbRelFirstArgs.Text = rel.FSargs;
+                tbRelSecondArgs.Text = rel.SSargs;
 
             }
             else // Don't show
@@ -161,14 +164,15 @@ namespace AtlasIDE
 
                     rel.Name = tbRelName.Text;
                     rel.Owner = tbRelOwn.Text;
-                    rel.Category = tbRelCat.Text;
                     rel.Description = tbRelDescription.Text;
+                    rel.Type = cbType.SelectedItem.ToString();
                     rel.ThingID = tbRelThing.Text;
                     rel.SpaceID = tbRelSpace.Text;
-                    rel.Type = tbRelType.Text;
                     rel.FSname = tbRelFirst.Text;
                     rel.SSname = tbRelSec.Text;
 
+                    rel.FSargs = tbRelFirstArgs.Text;
+                    rel.SSargs = tbRelSecondArgs.Text;
                 }
 
                 UpdateRelationship();
@@ -181,6 +185,9 @@ namespace AtlasIDE
                     textBoxes[i].Clear();
                     textBoxes[i].Visibility = Visibility.Hidden;
                 }
+
+                lbRelType.Visibility = Visibility.Hidden;
+                cbType.Visibility = Visibility.Hidden;
 
             }
         }

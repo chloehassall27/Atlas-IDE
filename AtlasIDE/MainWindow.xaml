@@ -136,28 +136,39 @@
                             <ColumnDefinition Width="110*"/>
                             <ColumnDefinition Width="589*"/>
                         </Grid.ColumnDefinitions>
-                        <Label Content="Relationships" HorizontalAlignment="Left" Margin="31,31,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="82"/>
-                        <ListBox x:Name="lbRelationship" HorizontalAlignment="Left" Height="300" Margin="19,57,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" />
+                        <Label Content="Relationships" HorizontalAlignment="Left" Margin="36,195,0,0" VerticalAlignment="Top" Grid.ColumnSpan="3" Width="82"/>
+                        <ListBox x:Name="lbRelationship" HorizontalAlignment="Left" Height="156" Margin="19,222,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" />
                         <Button x:Name="btRelEdit" Content="Edit" Grid.Column="2" HorizontalAlignment="Left" Margin="65,72,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.467,-0.25" Click="btRelEdit_Click" Grid.ColumnSpan="2"/>
                         <TextBox x:Name="tbRelName" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="79.861,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                         <Label x:Name="lbRelName" Content="Relationship Name" Grid.Column="3" HorizontalAlignment="Left" Margin="79.861,31,0,0" VerticalAlignment="Top" Width="120"/>
                         <Label x:Name="lbRelOwn" Content="Owner" Grid.Column="3" Margin="274.861,31,254,0" VerticalAlignment="Top" Width="60" HorizontalAlignment="Center"/>
-                        <TextBox x:Name="tbRelCat" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="399.861,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                         <TextBox x:Name="tbRelOwn" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="244.861,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                        <Label x:Name="lbRelCat" Content="Category" Grid.Column="3" Margin="429.861,31,99,0" VerticalAlignment="Top" Width="60" HorizontalAlignment="Center"/>
                         <TextBox x:Name="tbRelDescription" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="79.861,117,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="440"/>
                         <Label x:Name="lbRelDes" Content="Description" Grid.Column="3" HorizontalAlignment="Left" Margin="79.861,91,0,0" VerticalAlignment="Top" Width="120"/>
                         <Label x:Name="lbRelThing" Content="Thing ID" Grid.Column="3" HorizontalAlignment="Left" Margin="109.861,151,0,0" VerticalAlignment="Top" Width="55"/>
-                        <Label x:Name="lbRelSpace" Content="Space ID" Grid.Column="3" HorizontalAlignment="Left" Margin="274.861,151,0,0" VerticalAlignment="Top" Width="120"/>
+                        <Label x:Name="lbRelSpace" Content="Space ID" Grid.Column="3" HorizontalAlignment="Left" Margin="423.8,31,0,0" VerticalAlignment="Top" Width="120"/>
                         <Label x:Name="lbRelType" Content="Type" Grid.Column="3" HorizontalAlignment="Left" Margin="439.861,151,0,0" VerticalAlignment="Top" Width="45"/>
                         <TextBox x:Name="tbRelThing" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="79.861,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                        <TextBox x:Name="tbRelSpace" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="244.861,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                        <TextBox x:Name="tbRelType" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="399.861,177,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                        <TextBox x:Name="tbRelSpace" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="393.8,57,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                         <Button x:Name="btRelSave" Content="Save" Grid.Column="2" HorizontalAlignment="Left" Margin="65,177,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="0.467,-0.25" Click="btRelSave_Click" Grid.ColumnSpan="2"/>
                         <TextBox x:Name="tbRelFirst" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="79.861,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
                         <Label x:Name="lbRelFirstService" Content="First Service" Grid.Column="3" HorizontalAlignment="Left" Margin="99.861,222,0,0" VerticalAlignment="Top" Width="75"/>
                         <TextBox x:Name="tbRelSec" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="399.861,248,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
-                        <Label x:Name="lbRelSecondService" Content="First Service" Grid.Column="3" HorizontalAlignment="Left" Margin="423.861,220,0,0" VerticalAlignment="Top" Width="75"/>
+                        <Label x:Name="lbRelSecondService" Content="Second Service" Grid.Column="3" HorizontalAlignment="Left" Margin="423.861,220,0,0" VerticalAlignment="Top" Width="75"/>
+                        <Label Content="Things" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Grid.ColumnSpan="2" Width="82" Grid.Column="1"/>
+                        <ListBox x:Name="lbRelationship_Copy1" HorizontalAlignment="Left" Height="156" Margin="19,34,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3" PreviewMouseLeftButtonDown="lbRelationship_PreMouseLeftButton" />
+                        <ComboBox x:Name="cbType" Grid.Column="3" HorizontalAlignment="Left" Margin="397.8,178,0,0" VerticalAlignment="Top" Width="120" SelectedValuePath="Content">
+                            <ComboBoxItem Content="Control"/>
+                            <ComboBoxItem Content="Drive"/>
+                            <ComboBoxItem Content="Support"/>
+                            <ComboBoxItem Content="Extend"/>
+                            <ComboBoxItem Content="Contest"/>
+                            <ComboBoxItem Content="Interference"/>
+                        </ComboBox>
+                        <TextBox x:Name="tbRelFirstArgs" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="79.8,313,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                        <Label x:Name="lbRelFSArgs" Content="First Service Args" Grid.Column="3" HorizontalAlignment="Left" Margin="85.8,287,0,0" VerticalAlignment="Top" Width="114"/>
+                        <TextBox x:Name="tbRelSecondArgs" Grid.Column="3" HorizontalAlignment="Left" Height="23" Margin="399.8,313,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+                        <Label x:Name="lbRelSSArgs" Content="Second Service Args" Grid.Column="3" HorizontalAlignment="Left" Margin="399.8,287,0,0" VerticalAlignment="Top" Width="120"/>
                     </Grid>
                 </TabItem>
                 <TabItem x:Name="tiRecipe" Header="Recipes" AllowDrop="True" DragOver="recipe_DragOver">
