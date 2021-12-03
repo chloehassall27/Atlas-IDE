@@ -175,8 +175,7 @@
                         </Grid.ColumnDefinitions>
                         <Label Content="Apps" HorizontalAlignment="Left" Margin="3.2,15,0,0" VerticalAlignment="Top" Width="38" Grid.Column="1" Grid.ColumnSpan="2"/>
                         <ListBox x:Name="lbApp" Height="173" Margin="10,41,658,0" VerticalAlignment="Top" RenderTransformOrigin="-0.45,0.25" Grid.ColumnSpan="3"/>
-                        <Button x:Name="btAppNew" Content="New" Click="btNew" Margin="10,222,30.6,144" Grid.ColumnSpan="2"/>
-                        <Button x:Name="btAppClear" Content="Clear" Click ="btClear" Margin="32.2,222,658,144" Grid.ColumnSpan="2" Grid.Column="1"/>
+                        <Button x:Name="btAppNew" Content="New" Click="btNew" Margin="10,222,658,144" Grid.ColumnSpan="3"/>
                         <Label x:Name ="Recipe_Rel" Content="Relationships" HorizontalAlignment="Left" Margin="589.4,214,0,0" VerticalAlignment="Top" Width="82" Grid.Column="2"/>
                         <ListBox x:Name="lbRelationship_Copy" PreviewMouseLeftButtonDown="Recipe_Rel_Drag" HorizontalAlignment="Left" Height="137" Margin="568.4,245,0,0" VerticalAlignment="Top" Width="120" RenderTransformOrigin="-0.45,0.25" Grid.Column="2" />
                         <Label x:Name ="Recipe_Serv" Content="Services" HorizontalContentAlignment="Center" Margin="603.4,15,41,0" VerticalAlignment="Top" Width="auto" Grid.Column="2"/>

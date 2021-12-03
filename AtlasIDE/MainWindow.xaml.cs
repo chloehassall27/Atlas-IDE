@@ -18,6 +18,7 @@ namespace AtlasIDE
         Service serv;
         App app = new App();
         bool box = true;
+        bool badlyNamedBoolean = false;
         List<App> appList = new List<App>();
         Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
@@ -417,8 +418,9 @@ namespace AtlasIDE
             lbRecipe.Items.Add(recipeCom);
             app.Commands.Add(cond);
 
-            cond.IF = null;
-            cond.THEN = null;
+            //cond.IF = null;
+            //cond.THEN = null;
+            badlyNamedBoolean = true;
             lbIF.Items.Clear();
             lbTHEN.Items.Clear();
         }
@@ -476,6 +478,8 @@ namespace AtlasIDE
 
         public void IF_Drop(object sender, DragEventArgs e) //Drop into IF box on conditional
         {
+            if (badlyNamedBoolean)
+                cond = new Cond_Eval();
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             if (lbIF.Items.Count > 1) { lbIF.Items.Clear(); }
@@ -498,10 +502,13 @@ namespace AtlasIDE
                 }
                 lbIF.Items.Add(data);
             }
+            badlyNamedBoolean = false;
         }
 
         public void THEN_Drop(object sender, DragEventArgs e) //Drop into THEN box on conditional
         {
+            if (badlyNamedBoolean)
+                cond = new Cond_Eval();
             ListBox parent = (ListBox)sender;
             object data = e.Data.GetData(typeof(string));
             if (lbTHEN.Items.Count > 1) { lbTHEN.Items.Clear(); }
@@ -524,6 +531,7 @@ namespace AtlasIDE
                 }
                 lbTHEN.Items.Add(data);
             }
+            badlyNamedBoolean = false;
         }
 
         public void btActivate(object sender, RoutedEventArgs e) //Activate App in Apps tab
@@ -551,7 +559,7 @@ namespace AtlasIDE
         public void Evaluate(App app)
         {
 
-            Console.WriteLine(app.Commands.Count);
+            //Console.WriteLine(app.Commands.Count);
             foreach (Command command in app.Commands)
             {
                 ServiceResponseTweet res = new ServiceResponseTweet();
@@ -561,7 +569,7 @@ namespace AtlasIDE
                     Command cond1 = (command as Cond_Eval).IF;
                     //Console.Write("conditional");
 
-                    if (command.GetType() == typeof(ServiceInstruction))
+                    if (cond1.GetType() == typeof(ServiceInstruction))
                     {
                         Service service = Networking.Services.Find(x => x.Name == cond1.func);
                         if (service != null) { 
@@ -585,7 +593,7 @@ namespace AtlasIDE
                     Command cond2 = (command as Cond_Eval).THEN;
                     //Console.Write("conditional");
 
-                    if (command.GetType() == typeof(ServiceInstruction))
+                    if (cond2.GetType() == typeof(ServiceInstruction))
                     {
                         Service service = Networking.Services.Find(x => x.Name == cond2.func);
                         if (service != null)
@@ -633,15 +641,18 @@ namespace AtlasIDE
         {
             thingList.ItemsSource = null;
             thingList.ItemsSource = Networking.Things;
+            thingList.Items.Refresh();
             //thingList.UpdateLayout();
         }
         public void UpdateServices()
         {
             List<string> thingIDs = new List<string>();
-            foreach (Service service in Networking.ServicesCollection)
+            foreach (Service service in Networking.Services)
                 if (!thingIDs.Contains(service.ThingID))
                     thingIDs.Add(service.ThingID);
+            thingFilterList.ItemsSource = null;
             thingFilterList.ItemsSource = thingIDs;
+            thingFilterList.Items.Refresh();
 
             List<string> services = new List<string>();
             foreach (Service service in Networking.ServicesCollection)

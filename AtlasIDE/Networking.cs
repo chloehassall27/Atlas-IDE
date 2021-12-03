@@ -118,7 +118,7 @@ namespace AtlasIDE
 
 
         private static readonly string HOST = "192.168.0.199";
-        private static readonly string HOST2 = "192.168.0.157";
+        private static readonly string HOST2 = "192.168.0.176";
         private static readonly int PORT = 6668;
         public static ServiceResponseTweet Call(Service service, string input)
         {
@@ -151,7 +151,7 @@ namespace AtlasIDE
             client.Close();
 
 
-            Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
+            //Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
             //Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
             return response;
         }
@@ -197,7 +197,7 @@ namespace AtlasIDE
             ServiceResponseTweet firstResponseTweet = new ServiceResponseTweet();
             ServiceResponseTweet serviceResponseTweet = new ServiceResponseTweet();
 
-            if (type.Equals("control"))
+            if (type.Equals("System.Windows.Controls.ComboBoxItem: control"))
             {
                 firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
@@ -224,7 +224,7 @@ namespace AtlasIDE
 
 
             }
-            else if (type.Equals("drive"))
+            else if (type.Equals("System.Windows.Controls.ComboBoxItem: drive"))
             {
                 firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
@@ -235,13 +235,13 @@ namespace AtlasIDE
             //{
 
             //}
-            else if (type.Equals("extend")) // Do Service 1 While Doing Service 2
+            else if (type.Equals("System.Windows.Controls.ComboBoxItem: extend")) // Do Service 1 While Doing Service 2
             {
                 //firstResponseTweet = new ServiceResponseTweet();
                 //serviceResponseTweet = new ServiceResponseTweet();
 
                 var doThread = new Thread(() => firstResponseTweet = Call(first, relationship.FSargs));
-                var whileDoingThread = new Thread(() => serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult));
+                var whileDoingThread = new Thread(() => serviceResponseTweet = Call(second, relationship.SSargs));
                 doThread.Start();
                 whileDoingThread.Start();
 
