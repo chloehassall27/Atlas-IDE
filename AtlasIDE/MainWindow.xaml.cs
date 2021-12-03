@@ -14,7 +14,7 @@ namespace AtlasIDE
     { 
         public ICollectionView view;
         Relationship rel;
-        Service serv;
+        //Service serv;
         App app = new App();
         bool box = false;
         List<App> appList = new List<App>();
