@@ -269,6 +269,7 @@ namespace AtlasIDE
             int index = lbApp.Items.IndexOf(select_rel);
             lbApp.Items.RemoveAt(index);
             lbAppMan.Items.RemoveAt(index);
+            appList.RemoveAt(index);
         }
 
         private void btNew(object sender, RoutedEventArgs e) //Open recipe editor
@@ -296,7 +297,7 @@ namespace AtlasIDE
 
             string appName = tbAppName.Text;
             lbApp.Items.Add(appName);
-            app.Name = appName;
+            app.Name = appName; //app.Commands is already covered while dragging and dropping
 
             appList.Add(app);
             lbAppMan.Items.Add(appName);
@@ -306,6 +307,7 @@ namespace AtlasIDE
             lbTHEN.Items.Clear();
             tbAppName.Clear();
             app.Name = null;
+            app.Commands.Clear();
             MessageBox.Show("App Published!");
             appShow(false);
         }
@@ -512,14 +514,46 @@ namespace AtlasIDE
                 return;
             }
 
-            //string selection = lbApp.SelectedItem.ToString();
-            //int index = lbApp.Items.IndexOf(selection);
-            //Evaluate(appList[index]);
-            //TODO: define way to evaluate relationship/service
+            string selection = lbApp.SelectedItem.ToString();
+            int index = lbApp.Items.IndexOf(selection);
 
             DateTime now = DateTime.Now;
             string select_status = lbAppMan.SelectedItem.ToString() + "\t\tActive\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
             lbStatus.Items.Add(select_status);
+
+            for (int i = 0; i < appList[index].Commands.Count; i++)
+            {
+                Evaluate(appList[index].Commands[i]);
+            }
+            lbStatus.Items.Remove(select_status);
+            select_status = lbAppMan.SelectedItem.ToString() + "\t\tCompleted\t" + now.Hour + ":" + now.Minute + ":" + now.Second;
+            lbStatus.Items.Add(select_status);
+
+        }
+
+        //TODO
+        public bool Evaluate(Command command) //Evaluate relationships, services, Cond_Eval. I am able to pull each service and relationship, but someone needs to connect those to the API.
+        {
+            if (command is ServiceInstruction)
+            {
+                //Find Service from service name, similar to findRelationship above
+                //implement relationship and return a value depending what you need for the cond_eval
+                return true;
+            }
+            else if (command is RelationshipInstruction)
+            {
+                Relationship match = findRelationship(command.func);
+                //TODO: implement relationship
+                return true;
+            }
+            else //cond_eval
+            {
+                bool retVal = Evaluate(command.IF);
+                if (retVal) { 
+                    Evaluate(command.THEN); return true;
+                }
+                return false;
+            }
         }
         
 
