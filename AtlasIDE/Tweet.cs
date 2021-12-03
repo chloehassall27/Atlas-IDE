@@ -42,6 +42,20 @@ namespace AtlasIDE
         //The only IF and THEN objects allowed are Relationships and Services
     }
 
+    public class AppOutput
+    {
+        public string AppName { get; set; }
+        public string ServiceName { get; set; }
+        public string Result { get; set; }
+
+        public AppOutput(string AppName, string ServiceName, string Result)
+        {
+            this.AppName = AppName;
+            this.ServiceName = ServiceName;
+            this.Result = Result;
+        }
+    }
+
     public class Tweet
     {
         [JsonProperty(PropertyName = "Tweet Type")]

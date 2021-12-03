@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,11 +17,12 @@ namespace AtlasIDE
         Relationship rel;
         Service serv;
         App app = new App();
-        bool box = false;
+        bool box = true;
         List<App> appList = new List<App>();
         Cond_Eval cond = new Cond_Eval();
         bool initRel = false;
         System.Windows.Controls.ListBox dragSource = null;
+        ObservableCollection<AppOutput> Outputs = new ObservableCollection<AppOutput>();
 
         public MainWindow()
         {
@@ -76,7 +78,7 @@ namespace AtlasIDE
             //lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
-            OutputResults.ItemsSource = Networking.Outputs;
+            OutputResults.ItemsSource = Outputs;
 
             /*
             lbRelationship_Copy.Items.Add(rel.Name);
@@ -84,6 +86,7 @@ namespace AtlasIDE
             lbService.Items.Add(serv.Name);
             */
 
+            //lbDrop.AllowDrop = true;
             view = CollectionViewSource.GetDefaultView(Networking.ServicesCollection);
             serviceList.ItemsSource = view;
             
@@ -291,6 +294,7 @@ namespace AtlasIDE
         private void btNew(object sender, RoutedEventArgs e) //Open recipe editor
         {
             appShow(true);
+            app = new App();
         }
 
         private void btPublish(object sender, RoutedEventArgs e) //Post recipe to list and close recipe editor
@@ -424,12 +428,12 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             dragSource = parent;
             object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+            box = false; //tells the recipe listbox that they are receiving from a relationship
 
-            if(data != null)
+            if (data != null)
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
-            box = false; //tells the recipe listbox that they are receiving from a relationship
         }
 
         public void Recipe_Serv_Drag(object sender, System.Windows.Input.MouseButtonEventArgs e) //Drag from services box in Recipes (identical to above, used in case of future variation)
@@ -437,12 +441,12 @@ namespace AtlasIDE
             ListBox parent = (ListBox)sender;
             dragSource = parent;
             object data = GetDataFromListBox(dragSource, e.GetPosition(parent));
+            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
 
             if (data != null)
             {
                 DragDrop.DoDragDrop(parent, data, DragDropEffects.Copy);
             }
-            box = true; //tells the recipe listbox that they are receiving from a Service, not a recipe
         }
 
         public void Recipe_Drop(object sender, DragEventArgs e) //Drop into recipe box
@@ -548,56 +552,82 @@ namespace AtlasIDE
         {
 
             Console.WriteLine(app.Commands.Count);
-            foreach (object evaluatable in app.Commands)
+            foreach (Command command in app.Commands)
             {
-                if (evaluatable.GetType() == typeof(Cond_Eval))
+                ServiceResponseTweet res = new ServiceResponseTweet();
+                if (command.GetType() == typeof(Cond_Eval))
                 {
 
-                    object cond1 = (evaluatable as Cond_Eval).IF;
+                    Command cond1 = (command as Cond_Eval).IF;
                     //Console.Write("conditional");
-                    ServiceResponseTweet res = new ServiceResponseTweet();
-                    Service service = Networking.Services.Find(x => x.Name == (cond1 as string));
-                    if (service != null)
-                        res = Networking.Call(service);
 
-                    foreach (Thing thing in Networking.Things)
+                    if (command.GetType() == typeof(ServiceInstruction))
                     {
-                        Relationship rel = thing.Relationships.Find(x => x.Name == (cond1 as string));
-                        if (rel != null)
-                            res = Networking.EvalauteRelationship(rel);
+                        Service service = Networking.Services.Find(x => x.Name == cond1.func);
+                        if (service != null) { 
+                            res = Networking.Call(service, cond1.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                        }
                     }
+                    else foreach (Thing thing in Networking.Things)
+                        {
+                            Relationship rel = thing.Relationships.Find(x => x.Name == cond1.func);
+                            if (rel != null)
+                            {
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
+                        }
 
                     if (res.ServiceResult == null || res.ServiceResult == "0")
                         return;
 
-                    object cond2 = (evaluatable as Cond_Eval).THEN;
+                    Command cond2 = (command as Cond_Eval).THEN;
                     //Console.Write("conditional");
-                    service = Networking.Services.Find(x => x.Name == (cond2 as string));
-                    if (service != null)
-                        Networking.Call(service);
 
-                    foreach (Thing thing in Networking.Things)
+                    if (command.GetType() == typeof(ServiceInstruction))
                     {
-                        Relationship rel = thing.Relationships.Find(x => x.Name == (cond2 as string));
-                        if (rel != null)
-                            Networking.EvalauteRelationship(rel);
+                        Service service = Networking.Services.Find(x => x.Name == cond2.func);
+                        if (service != null)
+                        {
+                            res = Networking.Call(service, cond2.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                        }
                     }
+                    else foreach (Thing thing in Networking.Things)
+                        {
+                            Relationship rel = thing.Relationships.Find(x => x.Name == cond2.func);
+                            if (rel != null)
+                            { 
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
+                        }
                 }
 
                 else
                 {
-                    Service service = Networking.Services.Find(x => x.Name == (evaluatable as string));
-                    if (service != null)
-                        Networking.Call(service);
+                    if (command.GetType() == typeof(ServiceInstruction)) { 
+                        Service service = Networking.Services.Find(x => x.Name == command.func);
+                        if (service != null)
+                        {
+                            res = Networking.Call(service, command.arg);
+                            Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
 
-                    foreach (Thing thing in Networking.Things) {
-                        Relationship rel = thing.Relationships.Find(x => x.Name == (evaluatable as string));
-                        if (rel != null)
-                            Networking.EvalauteRelationship(rel);
+                        }
+                    }
+                    else foreach (Thing thing in Networking.Things) {
+                        Relationship rel = thing.Relationships.Find(x => x.Name == (command.func as string));
+                            if (rel != null)
+                            {
+                                res = Networking.EvalauteRelationship(rel);
+                                Outputs.Add(new AppOutput(app.Name, res.ServiceName, res.ServiceResult));
+                            }
                     }
 
                 }
             }
+            OutputResults.Items.Refresh();
         }
         public void UpdateThings()
         {

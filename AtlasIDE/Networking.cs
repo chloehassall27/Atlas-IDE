@@ -20,7 +20,6 @@ namespace AtlasIDE
         public static ObservableCollection<Relationship> RelationshipCollection { get; } = new ObservableCollection<Relationship>();
         public static MainWindow Window;
 
-        public static ObservableCollection<string> Outputs = new ObservableCollection<string>();
         public static void Start()
         {
             udpClient = new UdpClient(1235);
@@ -119,8 +118,9 @@ namespace AtlasIDE
 
 
         private static readonly string HOST = "192.168.0.199";
+        private static readonly string HOST2 = "192.168.0.157";
         private static readonly int PORT = 6668;
-        public static ServiceResponseTweet Call(Service service, int? input = null)
+        public static ServiceResponseTweet Call(Service service, string input)
         {
             ServiceCallTweet call = new ServiceCallTweet();
             call.TweetType = "Service call";
@@ -132,7 +132,11 @@ namespace AtlasIDE
 
             Thing thing = Things.Find(x => x.ID == service.ThingID);
 
-            TcpClient client = new TcpClient(HOST, PORT);
+            TcpClient client;
+            if(service.ThingID == "Kyles_RPi4")
+                client = new TcpClient(HOST, PORT);
+            else
+                client = new TcpClient(HOST2, PORT);
             Byte[] data = System.Text.Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(call, Formatting.Indented));
             NetworkStream stream = client.GetStream();
             stream.Write(data, 0, data.Length);
@@ -148,7 +152,7 @@ namespace AtlasIDE
 
 
             Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
-            Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
+            //Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
             return response;
         }
 
@@ -195,7 +199,7 @@ namespace AtlasIDE
 
             if (type.Equals("control"))
             {
-                firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
                 String serviceResponse = firstResponseTweet.ServiceResult;
 
@@ -210,7 +214,7 @@ namespace AtlasIDE
 
                 if (Convert.ToBoolean(boolRes))
                 {
-                    serviceResponseTweet = Call(second);
+                    serviceResponseTweet = Call(second, relationship.SSargs);
                 }
                 else
                 {
@@ -222,18 +226,9 @@ namespace AtlasIDE
             }
             else if (type.Equals("drive"))
             {
-                firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
-                String serviceResponse = firstResponseTweet.ServiceResult;
-
-                bool anIntegerNumber = int.TryParse(serviceResponse, out int convertedValue);
-
-                if (!anIntegerNumber)
-                {
-                    return null;
-                }
-
-                serviceResponseTweet = Call(second, convertedValue);
+                serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult);
 
             }
             //else if (type.Equals("Support")) // Before Service 1, Check on Service 2
@@ -242,10 +237,11 @@ namespace AtlasIDE
             //}
             else if (type.Equals("extend")) // Do Service 1 While Doing Service 2
             {
-                serviceResponseTweet = new ServiceResponseTweet();
+                //firstResponseTweet = new ServiceResponseTweet();
+                //serviceResponseTweet = new ServiceResponseTweet();
 
-                var doThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
-                var whileDoingThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
+                var doThread = new Thread(() => firstResponseTweet = Call(first, relationship.FSargs));
+                var whileDoingThread = new Thread(() => serviceResponseTweet = Call(second, firstResponseTweet.ServiceResult));
                 doThread.Start();
                 whileDoingThread.Start();
 
@@ -265,7 +261,7 @@ namespace AtlasIDE
 
             if (serviceResponseTweet != null) { 
                 Console.WriteLine(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
-                Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
+                //Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
             }
             return serviceResponseTweet;
 
