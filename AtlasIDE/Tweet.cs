@@ -1,12 +1,47 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AtlasIDE
 {
+    public class App
+    {
+        public string Name { get; set; }
+        public List<Command> Commands = new List<Command>(); //The app's list of commands, which can be executed in order.
+        //The only two objects allowed in an app's commands list are Commands and Cond_Evals.
+    }
+
+    public class Command
+    {
+        public string func { get; set; }
+        public string arg { get; set; }
+
+    }
+
+    public class RelationshipInstruction : Command
+    {
+        public RelationshipInstruction(string func)
+        {
+            this.func = func;
+            this.arg = "";
+        }
+    }
+
+    public class ServiceInstruction : Command
+    {
+        public ServiceInstruction(string func, string arg)
+        {
+            this.func = func;
+            this.arg = arg;
+        }
+    }
+
+    public class Cond_Eval : Command
+    {
+        public Command IF { get; set; }
+        public Command THEN { get; set; }
+        //The only IF and THEN objects allowed are Relationships and Services
+    }
+
     public class Tweet
     {
         [JsonProperty(PropertyName = "Tweet Type")]
@@ -103,5 +138,26 @@ namespace AtlasIDE
         public string SSname { get; set; }
     }
 
+    public class ServiceCallTweet : Tweet
+    {
+        [JsonProperty(PropertyName = "Service Name")]
+        public string Name { get; set; }
+        [JsonProperty(PropertyName = "Service Inputs")]
+        public string Inputs { get; set; }
+
+    }
+
+
+    public class ServiceResponseTweet : Tweet
+    {
+        [JsonProperty(PropertyName = "Service Name")]
+        public string ServiceName { get; set; }
+        [JsonProperty(PropertyName = "Status")]
+        public string Status { get; set; }
+        [JsonProperty(PropertyName = "Status Description")]
+        public string StatusDescription { get; set; }
+        [JsonProperty(PropertyName = "Service Result")]
+        public string ServiceResult { get; set; }
+    }
 
 }

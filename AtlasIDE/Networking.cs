@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
-using Newtonsoft.Json;
 
 namespace AtlasIDE
 {
@@ -16,7 +16,11 @@ namespace AtlasIDE
         private static UdpClient udpClient;
         public static List<Thing> Things { get; } = new List<Thing>();
         public static List<Service> Services { get; } = new List<Service>();
+        public static ObservableCollection<Service> ServicesCollection { get; } = new ObservableCollection<Service>();
+        public static ObservableCollection<Relationship> RelationshipCollection { get; } = new ObservableCollection<Relationship>();
         public static MainWindow Window;
+
+        public static ObservableCollection<string> Outputs = new ObservableCollection<string>();
         public static void Start()
         {
             udpClient = new UdpClient(1235);
@@ -36,10 +40,12 @@ namespace AtlasIDE
                 var Message = Encoding.Default.GetString(data);
 
                 var tweet = JsonConvert.DeserializeObject<Tweet>(Message);
-                switch (tweet.TweetType) {
+                switch (tweet.TweetType)
+                {
                     case "Identity_Thing":
                         var thingTweet = JsonConvert.DeserializeObject<IdentityThingTweet>(Message);
-                        if (Things.Find(x => x.ID == tweet.ThingID) == null) {
+                        if (Things.Find(x => x.ID == tweet.ThingID) == null)
+                        {
                             Console.WriteLine("New thing found!");
                             Things.Add(new Thing(thingTweet));
                             Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
@@ -48,9 +54,10 @@ namespace AtlasIDE
                     case "Identity_Language":
                         var langTweet = JsonConvert.DeserializeObject<IdentityLanguageTweet>(Message);
                         var thing = Things.Find(x => x.ID == langTweet.ThingID);
-                        if (thing != null) { 
+                        if (thing != null)
+                        {
                             thing.AddNetworkInfo(langTweet);
-                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle); 
+                            Application.Current.Dispatcher.Invoke(Window.UpdateThings, DispatcherPriority.ContextIdle);
                         }
                         break;
                     case "Identity_Entity":
@@ -81,9 +88,12 @@ namespace AtlasIDE
                             var service = new Service(serviceTweet);
                             entity.Services.Add(service);
                             Services.Add(service);
+                            Application.Current.Dispatcher.Invoke((Action)delegate
+                            {
+                                ServicesCollection.Add(service);
+                            });
                             Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         }
-                        //Application.Current.Dispatcher.Invoke(Window.UpdateServices, DispatcherPriority.ContextIdle);
                         break;
 
                     case "Relationship":
@@ -96,16 +106,180 @@ namespace AtlasIDE
                         {
                             Console.WriteLine("New relationship found!");
                             thing.Relationships.Add(new Relationship(relationshipTweet));
-                            Application.Current.Dispatcher.Invoke(Window.UpdateRelationships, DispatcherPriority.ContextIdle);
+
+                            Application.Current.Dispatcher.Invoke(Window.UpdateRelationship, DispatcherPriority.ContextIdle);
                         }
                         break;
-
-                    // What about unbounded services?
 
                     default:
                         break;
                 }
             }
+        }
+
+
+        private static readonly string HOST = "192.168.0.199";
+        private static readonly int PORT = 6668;
+        public static ServiceResponseTweet Call(Service service, int? input = null)
+        {
+            ServiceCallTweet call = new ServiceCallTweet();
+            call.TweetType = "Service call";
+            call.ThingID = service.ThingID;
+            call.SpaceID = service.SpaceID;
+            call.Name = service.Name;
+            call.Inputs = '(' + input.ToString() + ')';
+            Console.WriteLine(JsonConvert.SerializeObject(call, Formatting.Indented));
+
+            Thing thing = Things.Find(x => x.ID == service.ThingID);
+
+            TcpClient client = new TcpClient(HOST, PORT);
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(call, Formatting.Indented));
+            NetworkStream stream = client.GetStream();
+            stream.Write(data, 0, data.Length);
+
+            data = new Byte[256];
+            String responseData = String.Empty;
+            Int32 bytes = stream.Read(data, 0, data.Length);
+            responseData = Encoding.ASCII.GetString(data, 0, bytes);
+            ServiceResponseTweet response = JsonConvert.DeserializeObject<ServiceResponseTweet>(responseData);
+            Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
+            stream.Close();
+            client.Close();
+
+
+            Console.WriteLine(response.ServiceName + ": " + response.ServiceResult);
+            Outputs.Add(response.ServiceName + ": " + response.ServiceResult);
+            return response;
+        }
+
+        public static void VoidCall(Service service, ref ServiceResponseTweet response)
+        {
+            ServiceCallTweet call = new ServiceCallTweet();
+            call.TweetType = "Service call";
+            call.ThingID = service.ThingID;
+            call.SpaceID = service.SpaceID;
+            call.Name = service.Name;
+            call.Inputs = "()";
+            Console.WriteLine(JsonConvert.SerializeObject(call, Formatting.Indented));
+
+            Thing thing = Things.Find(x => x.ID == service.ThingID);
+
+            TcpClient client = new TcpClient(HOST, PORT);
+            Byte[] data = System.Text.Encoding.ASCII.GetBytes(JsonConvert.SerializeObject(call, Formatting.Indented));
+            NetworkStream stream = client.GetStream();
+            stream.Write(data, 0, data.Length);
+
+            data = new Byte[256];
+            String responseData = String.Empty;
+            Int32 bytes = stream.Read(data, 0, data.Length);
+            responseData = Encoding.ASCII.GetString(data, 0, bytes);
+            response = JsonConvert.DeserializeObject<ServiceResponseTweet>(responseData);
+            Console.WriteLine(JsonConvert.SerializeObject(response, Formatting.Indented));
+            stream.Close();
+            client.Close();
+        }
+
+        public static ServiceResponseTweet EvalauteRelationship(Relationship relationship)
+        {
+            Service first = findService(relationship.FSname);
+            Service second = findService(relationship.SSname);
+            String type = relationship.Type;
+
+            if (first == null || second == null)
+            {
+                return null;
+            }
+
+            ServiceResponseTweet firstResponseTweet = new ServiceResponseTweet();
+            ServiceResponseTweet serviceResponseTweet = new ServiceResponseTweet();
+
+            if (type.Equals("Control"))
+            {
+                firstResponseTweet = Call(first); // First call to obtain input for second call
+
+                String serviceResponse = firstResponseTweet.ServiceResult;
+
+                bool anIntegerNumber = int.TryParse(serviceResponse, out int boolRes);
+
+                if (!anIntegerNumber)
+                {
+                    return null;
+                }
+
+
+
+                if (Convert.ToBoolean(boolRes))
+                {
+                    serviceResponseTweet = Call(second);
+                }
+                else
+                {
+                    serviceResponseTweet.ServiceName = second.Name;
+                    serviceResponseTweet.ServiceResult = "First Service evaluated to 0, " + second.Name + " did not run!";
+                }
+
+
+            }
+            else if (type.Equals("Drive"))
+            {
+                firstResponseTweet = Call(first); // First call to obtain input for second call
+
+                String serviceResponse = firstResponseTweet.ServiceResult;
+
+                bool anIntegerNumber = int.TryParse(serviceResponse, out int convertedValue);
+
+                if (!anIntegerNumber)
+                {
+                    return null;
+                }
+
+                serviceResponseTweet = Call(second, convertedValue);
+
+            }
+            //else if (type.Equals("Support")) // Before Service 1, Check on Service 2
+            //{
+
+            //}
+            else if (type.Equals("Extend")) // Do Service 1 While Doing Service 2
+            {
+                serviceResponseTweet = new ServiceResponseTweet();
+
+                var doThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
+                var whileDoingThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
+                doThread.Start();
+                whileDoingThread.Start();
+
+            }
+            //else if (type.Equals("Contest")) // Prefer using Service 1 over Service 2
+            //{
+
+            //}
+            //else if (type.Equals("Interfere")) // Do not do service 1 if doing service 2
+            //{
+
+            //}
+            else
+            {
+                serviceResponseTweet = null;
+            }
+
+            if (serviceResponseTweet != null)
+            {
+                Console.WriteLine(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
+                Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
+            }
+            return serviceResponseTweet;
+
+        }
+
+        public static Service findService(String name)
+        {
+            foreach (Service service in Services)
+            {
+                if (service.Name.Equals(name))
+                    return service;
+            }
+            return null;
         }
 
     }

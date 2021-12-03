@@ -20,6 +20,9 @@ namespace AtlasIDE
         // Second Service Name
         public string SSname { get; set; }
 
+        public string FSargs { get; set; }
+        public string SSargs { get; set; }
+
         public Relationship(RelationshipTweet tweet)
         {
             ThingID = tweet.ThingID;
@@ -31,6 +34,8 @@ namespace AtlasIDE
             Description = tweet.Description;
             FSname = tweet.FSname;
             SSname = tweet.SSname;
+            FSargs = "";
+            SSargs = "";
         }
     }
 }
