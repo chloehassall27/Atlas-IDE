@@ -26,7 +26,7 @@ namespace AtlasIDE
             udpClient.JoinMulticastGroup(IPAddress.Parse("232.1.1.1"), 16);
 
             var receiveThread = new Thread(Receive);
-            receiveThread.Start();
+            receiveThread.Start();            
         }
 
         public static void Receive()
@@ -189,11 +189,12 @@ namespace AtlasIDE
                 return null;
             }
 
+            ServiceResponseTweet firstResponseTweet = new ServiceResponseTweet();
             ServiceResponseTweet serviceResponseTweet = new ServiceResponseTweet();
 
             if (type.Equals("Control"))
             {
-                ServiceResponseTweet firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first); // First call to obtain input for second call
 
                 String serviceResponse = firstResponseTweet.ServiceResult;
 
@@ -220,7 +221,7 @@ namespace AtlasIDE
             }
             else if (type.Equals("Drive"))
             {
-                ServiceResponseTweet firstResponseTweet = Call(first); // First call to obtain input for second call
+                firstResponseTweet = Call(first); // First call to obtain input for second call
 
                 String serviceResponse = firstResponseTweet.ServiceResult;
 
@@ -240,10 +241,10 @@ namespace AtlasIDE
             //}
             else if (type.Equals("Extend")) // Do Service 1 While Doing Service 2
             {
-                ServiceResponseTweet serviceResponseTweet2 = new ServiceResponseTweet();
+                serviceResponseTweet = new ServiceResponseTweet();
 
                 var doThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
-                var whileDoingThread = new Thread(() => VoidCall(first, ref serviceResponseTweet2));
+                var whileDoingThread = new Thread(() => VoidCall(first, ref serviceResponseTweet));
                 doThread.Start();
                 whileDoingThread.Start();
 
@@ -265,7 +266,6 @@ namespace AtlasIDE
                 Console.WriteLine(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult);
                 Outputs.Add(serviceResponseTweet.ServiceName + ": " + serviceResponseTweet.ServiceResult); 
             }
-
             return serviceResponseTweet;
 
         }
