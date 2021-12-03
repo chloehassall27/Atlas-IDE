@@ -197,7 +197,7 @@ namespace AtlasIDE
             ServiceResponseTweet firstResponseTweet = new ServiceResponseTweet();
             ServiceResponseTweet serviceResponseTweet = new ServiceResponseTweet();
 
-            if (type.Equals("System.Windows.Controls.ComboBoxItem: control"))
+            if (type.Equals("control") || type.Equals("System.Windows.Controls.ComboBoxItem: control"))
             {
                 firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
@@ -224,7 +224,7 @@ namespace AtlasIDE
 
 
             }
-            else if (type.Equals("System.Windows.Controls.ComboBoxItem: drive"))
+            else if (type.Equals("drive") || type.Equals("System.Windows.Controls.ComboBoxItem: drive"))
             {
                 firstResponseTweet = Call(first, relationship.FSargs); // First call to obtain input for second call
 
@@ -235,7 +235,7 @@ namespace AtlasIDE
             //{
 
             //}
-            else if (type.Equals("System.Windows.Controls.ComboBoxItem: extend")) // Do Service 1 While Doing Service 2
+            else if (type.Equals("extend") || type.Equals("System.Windows.Controls.ComboBoxItem: extend")) // Do Service 1 While Doing Service 2
             {
                 //firstResponseTweet = new ServiceResponseTweet();
                 //serviceResponseTweet = new ServiceResponseTweet();

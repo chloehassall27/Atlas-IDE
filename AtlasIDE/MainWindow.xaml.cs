@@ -677,12 +677,12 @@ namespace AtlasIDE
         
         public void UpdateRelationship()
         {
-            List<string> thingIDs = new List<string>();
-            foreach (Thing thing in Networking.Things)
-                foreach (Relationship relationship in thing.Relationships)
-                    if (!thingIDs.Contains(relationship.ThingID))
-                        thingIDs.Add(relationship.ThingID);
-            thingFilterList.ItemsSource = thingIDs;
+            //List<string> thingIDs = new List<string>();
+            //foreach (Thing thing in Networking.Things)
+            //    foreach (Relationship relationship in thing.Relationships)
+            //        if (!thingIDs.Contains(relationship.ThingID))
+            //            thingIDs.Add(relationship.ThingID);
+            //thingFilterList.ItemsSource = thingIDs;
 
             List<string> relationships = new List<string>();
             foreach (Thing thing in Networking.Things)
